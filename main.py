@@ -1,5 +1,5 @@
 import pandas as pd
-import sqlite3 as sql
+
 
 caminho_planilha = r"D:\Usuário\wesll\Desktop\Criação de preços\JAIME 6042022.xlsx"
 
