@@ -1,11 +1,22 @@
 import pandas as pd
-import pdfplumber
 
-pdf = pdfplumber.open(r"D:\Usuário\wesll\Desktop\Criação de preços\rptListaPrecoModelo2.pdf")
-p = pdf.pages[0]
+caminho = r"D:\Usuário\wesll\Desktop\Criação de preços\IDB 681921.xlsx"
 
-tabela = p.extract_table()
+df = pd.read_excel(caminho, sheet_name='A')
 
-print(tabela)
-df = pd.DataFrame(tabela[:1], columns=tabela[0])
+if df.iloc[2, 0].strip() == 'Filtro:':
+    df = df.drop(index=[0, 1, 2])
+else:
+    df = df.drop(index=[0, 1])
 
+df = df.drop(df.index[[-1, -2]])
+
+valores = {'Codigo': [valor for valor in df['Unnamed: 0'][1:]],
+           'Descricao': [valor for valor in df['Unnamed: 1'][1:]],
+           'Custo': [valor for valor in df['Relatório'][1:]]}
+
+df = pd.DataFrame(valores)
+
+print(df)
+print(100 * '=')
+print(df)
