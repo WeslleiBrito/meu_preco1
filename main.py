@@ -1,17 +1,17 @@
 import pandas as pd
+import pandas as df
 
 
-caminho_planilha = r"D:\Usuário\wesll\Desktop\Criação de preços\JAIME 6042022.xlsx"
+caminho_planilha = r"D:\Usuário\wesll\Desktop\Criação de preços\ROCHA FORTE 669636.xlsx"
 
-planilha_original = pd.read_excel(caminho_planilha, sheet_name="A")
+planilha_original = pd.read_excel(caminho_planilha, sheet_name='A')
+
+print(planilha_original)
 
 if planilha_original.iloc[2, 0].strip() == 'Filtro:':
-    planilha_editada = planilha_original.drop(index=[0, 1, 2])
+    planilha_editada = planilha_original.drop(index=[0, 1, 2], columns=['Unnamed: 10', 'Unnamed: 11'])
 else:
-    planilha_editada = planilha_original.drop(index=[0, 1])
-
-
-planilha_editada = planilha_editada.drop(['Unnamed: 10', 'Unnamed: 11'], axis=1)
+    planilha_editada = planilha_original.drop(index=[0, 1], columns=['Unnamed: 10', 'Unnamed: 11'])
 
 
 indices = list()
@@ -39,8 +39,11 @@ for coluna in range(0, pd.shape[1]):
     valor.clear()
 
 
-for dados in valores.keys():
-    print(f'{dados}: {valores[dados]}')
+novo_df = df.DataFrame(valores)
+print(novo_df)
+
+# for dados in valores.keys():
+#     print(f'{dados}: {valores[dados]}')
 
 
 
