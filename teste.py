@@ -1,22 +1,42 @@
-import pandas as pd
+import sqlite3 as sql
+localhost = r"D:\Usuário\wesll\Desktop\base_precos.db"
 
-caminho = r"D:\Usuário\wesll\Desktop\Criação de preços\IDB 681921.xlsx"
+class conectaBanco:
 
-df = pd.read_excel(caminho, sheet_name='A')
+    def __init__(self):
+        self.__cursor = self.__conecta()
 
-if df.iloc[2, 0].strip() == 'Filtro:':
-    df = df.drop(index=[0, 1, 2])
-else:
-    df = df.drop(index=[0, 1])
+    def __conecta(self):
+        try:
+            banco = sql.connect(localhost)
+            cursor = banco.cursor()
+            return cursor
+        except Exception as erro:
+            raise Exception('Banco de dados inacessível:', erro)
 
-df = df.drop(df.index[[-1, -2]])
+    def seleciona_tabela(self, nome_tabela):
+        return self.__cursor.execute(f'SELECT * FROM {nome_tabela}').fetchall()
 
-valores = {'Codigo': [valor for valor in df['Unnamed: 0'][1:]],
-           'Descricao': [valor for valor in df['Unnamed: 1'][1:]],
-           'Custo': [valor for valor in df['Relatório'][1:]]}
+    def seleciona_coluna(self, tabela, coluna):
+        return self.__cursor.execute(f'SELECT {coluna} from {tabela}').fetchall()
 
-df = pd.DataFrame(valores)
 
-print(df)
-print(100 * '=')
-print(df)
+if __name__ == '__main__':
+    coluna_codigos = conectaBanco().seleciona_coluna('estoque', 'codigo')
+    coluna_subGrupos = conectaBanco().seleciona_coluna('estoque', 'sub_grupo')
+
+    lista_codigos = [codigo[0] for codigo in coluna_codigos]
+    lista_subGrupos = [subGrupo[0] for subGrupo in coluna_subGrupos]
+    print(lista_codigos)
+    if '20002' in lista_codigos:
+        print(lista_subGrupos[lista_codigos.index('20002')])
+    else:
+        print('Não')
+
+
+
+
+
+
+
+
