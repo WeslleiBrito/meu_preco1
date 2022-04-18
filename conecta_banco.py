@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import sqlite3 as sql
 from tkinter.filedialog import askopenfilename
 
@@ -43,3 +44,14 @@ if __name__ == '__main__':
         print(lista_subGrupos[lista_codigos.index('20002')])
     else:
         print('Não')
+=======
+import sqlite3 as sq
+localhost = r"D:\Usuário\wesll\Desktop\base_precos.db"
+class ConectaBanco:
+    def __init__(self):
+        pass
+
+    def conector(self):
+        with sq.connect(localhost) as conn:
+            return conn.cursor()
+>>>>>>> origin/master
