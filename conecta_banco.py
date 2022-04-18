@@ -1,5 +1,16 @@
 import sqlite3 as sql
-localhost = r"D:\Usuário\wesll\Desktop\base_precos.db"
+from tkinter.filedialog import askopenfilename
+
+
+def caminho(localhost=None):
+    if not localhost:
+        endereco = askopenfilename(filetypes=(('Arquivo SQlite3', '*.db'), ('', '')))
+        if endereco:
+            with open('camonhos.txt', '') as caminhos:
+                caminhos.write(endereco)
+        return caminhos.readline()[0]
+    return localhost
+
 
 class conectaBanco:
 
@@ -8,7 +19,7 @@ class conectaBanco:
 
     def __conecta(self):
         try:
-            banco = sql.connect(localhost)
+            banco = sql.connect(caminho())
             cursor = banco.cursor()
             return cursor
         except Exception as erro:
@@ -32,11 +43,3 @@ if __name__ == '__main__':
         print(lista_subGrupos[lista_codigos.index('20002')])
     else:
         print('Não')
-
-
-
-
-
-
-
-
