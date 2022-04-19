@@ -1,16 +1,29 @@
-<<<<<<< HEAD
+import os
 import sqlite3 as sql
 from tkinter.filedialog import askopenfilename
 
 
 def caminho(localhost=None):
-    if not localhost:
-        endereco = askopenfilename(filetypes=(('Arquivo SQlite3', '*.db'), ('', '')))
-        if endereco:
-            with open('camonhos.txt', '') as caminhos:
+    with open('caminhos.txt', 'r+') as caminhos:
+        if caminhos == '' and localhost is None:
+            endereco = askopenfilename(filetypes=(('Arquivo SQlite3', '*.db'), ('', '')))
+            if endereco:
                 caminhos.write(endereco)
+                return caminhos.readline()[0]
+            else:
+                print('Informe um banco de dados válido!')
+        elif localhost is not None:
+            return localhost
         return caminhos.readline()[0]
-    return localhost
+
+
+# if not localhost:
+#     endereco = askopenfilename(filetypes=(('Arquivo SQlite3', '*.db'), ('', '')))
+#     if endereco:
+#         with open('camonhos.txt', '') as caminhos:
+#             caminhos.write(endereco)
+#     return caminhos.readline()[0]
+# return localhost
 
 
 class conectaBanco:
@@ -33,25 +46,16 @@ class conectaBanco:
         return self.__cursor.execute(f'SELECT {coluna} from {tabela}').fetchall()
 
 
-if __name__ == '__main__':
-    coluna_codigos = conectaBanco().seleciona_coluna('estoque', 'codigo')
-    coluna_subGrupos = conectaBanco().seleciona_coluna('estoque', 'sub_grupo')
+local_arquivo = caminho()
 
-    lista_codigos = [codigo[0] for codigo in coluna_codigos]
-    lista_subGrupos = [subGrupo[0] for subGrupo in coluna_subGrupos]
-    print(lista_codigos)
-    if '20002' in lista_codigos:
-        print(lista_subGrupos[lista_codigos.index('20002')])
-    else:
-        print('Não')
-=======
-import sqlite3 as sq
-localhost = r"D:\Usuário\wesll\Desktop\base_precos.db"
-class ConectaBanco:
-    def __init__(self):
-        pass
-
-    def conector(self):
-        with sq.connect(localhost) as conn:
-            return conn.cursor()
->>>>>>> origin/master
+# if __name__ == '__main__':
+#     coluna_codigos = conectaBanco().seleciona_coluna('estoque', 'codigo')
+#     coluna_subGrupos = conectaBanco().seleciona_coluna('estoque', 'sub_grupo')
+#
+#     lista_codigos = [codigo[0] for codigo in coluna_codigos]
+#     lista_subGrupos = [subGrupo[0] for subGrupo in coluna_subGrupos]
+#     print(lista_codigos)
+#     if '20002' in lista_codigos:
+#         print(lista_subGrupos[lista_codigos.index('20002')])
+#     else:
+#         print('Não')
