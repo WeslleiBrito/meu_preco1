@@ -12,7 +12,7 @@ class bancoDeDados:
 
     def __conecta(self):
         try:
-            banco = sql.connect(r"D:\Usuário\wesll\Desktop\base_precos.db")
+            banco = sql.connect(r"C:\Users\9010\PycharmProjects\meu_preco1\base_preco.db")
             cursor = banco.cursor()
             return cursor
         except Exception as erro:
