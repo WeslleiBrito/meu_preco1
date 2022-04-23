@@ -1,9 +1,10 @@
 import pandas as pd
-from recebe_nota import RecebeNota
+from recebe_nota import recebeNota
+
 
 class LimpaNota(object):
-    def __init__(self):
-        self.planilha = RecebeNota().gera_dataframe()
+    def __init__(self, caminho):
+        self.planilha = recebeNota(caminho).dataframe
 
     def __str__(self):
         return f'{self.limpa_nota()}'
@@ -25,6 +26,6 @@ class LimpaNota(object):
 
 
 if __name__ == '__main__':
-    planilha_limpa = LimpaNota()
+    inicial = r'C:\Users\9010\Desktop\Criação de preços'
+    planilha_limpa = LimpaNota(inicial)
     print(planilha_limpa)
-
