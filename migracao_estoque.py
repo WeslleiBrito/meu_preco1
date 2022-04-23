@@ -1,12 +1,10 @@
 import pandas as pd
-import sqlite3 as sq
+from conecta_banco import bancoDeDados
 
-caminho = r"D:\Usuário\wesll\Desktop\Arquivos de migração\Estoque.xlsx"
+banco = bancoDeDados().banco
+cursor = banco.cursor()
 
-conn = sq.connect(r"D:\Usuário\wesll\Desktop\base_precos.db")
-cursor = conn.cursor()
-
-estoque = pd.read_excel(caminho, sheet_name='Estoque')
+estoque = pd.read_excel("Estoque.xlsx", sheet_name='Estoque')
 
 for linha in range(len(estoque)):
     codigo = str(estoque.iloc[linha, 0])
@@ -16,7 +14,7 @@ for linha in range(len(estoque)):
     cursor.execute("INSERT INTO estoque (codigo, descricao, sub_grupo) VALUES (?, ?, ?)", (codigo, descricao, sub_grupo))
     print(f'Produto: {descricao} | [{linha + 1}/{len(estoque)}]')
 
-conn.commit()
-cursor.close()
-conn.close()
 
+banco.commit()
+cursor.close()
+banco.close()

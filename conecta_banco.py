@@ -4,17 +4,22 @@ import sqlite3 as sql
 class bancoDeDados:
 
     def __init__(self):
-        self.__cursor = self.__conecta()
+        self.__banco = self.__conecta()
+        self.__cursor = self.__conecta().cursor()
 
     @property
     def cursor(self):
         return self.__conecta()
 
+    @property
+    def banco(self):
+        return self.__banco
+
+
     def __conecta(self):
         try:
-            banco = sql.connect("base_preco.db")
-            cursor = banco.cursor()
-            return cursor
+            return sql.connect("base_preco.db")
+
         except Exception as erro:
             raise Exception('Banco de dados inacessível:', erro)
 

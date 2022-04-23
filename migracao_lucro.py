@@ -1,8 +1,8 @@
 import pandas as pd
-import sqlite3 as sq
+from conecta_banco import bancoDeDados
 
-caminho = r"D:\Usuário\wesll\Desktop\Arquivos de migração\mkpsub.xlsx"
-banco = sq.connect(r"D:\Usuário\wesll\Desktop\base_precos.db")
+caminho = r"mkpsub.xlsx"
+banco = bancoDeDados().banco
 cursor = banco.cursor()
 
 tabela_lucro = pd.read_excel(caminho, sheet_name='mkpsub')
@@ -13,7 +13,7 @@ for linha in range(len(tabela_lucro)):
     sub_grupo = tabela_lucro.iloc[linha, 0]
     lucro = tabela_lucro.iloc[linha, 1]
 
-    cursor.execute("INSERT INTO lucro_produto (subGrupo, lucro) VALUES (?, ?)", (sub_grupo, lucro))
+    cursor.execute("INSERT INTO lucro_subgrupo (descricao, lucro) VALUES (?, ?)", (sub_grupo, lucro))
     print(f'SubGrupo: {sub_grupo} | [{linha}/{len(tabela_lucro)}]')
 
 banco.commit()
