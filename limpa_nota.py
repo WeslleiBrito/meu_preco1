@@ -6,8 +6,9 @@ class LimpaNota(object):
     def __init__(self, caminho):
         self.planilha = recebeNota(caminho).dataframe
 
-    def __str__(self):
-        return f'{self.limpa_nota()}'
+    @property
+    def dataframe(self):
+        return self.limpa_nota()
 
     def limpa_nota(self):
 
@@ -27,5 +28,9 @@ class LimpaNota(object):
 
 if __name__ == '__main__':
     inicial = r'C:\Users\9010\Desktop\Criação de preços'
-    planilha_limpa = LimpaNota(inicial)
-    print(planilha_limpa)
+    # planilha_limpa = LimpaNota(inicial)
+    # planilha_limpa2 = LimpaNota(inicial)
+    # print(planilha_limpa.dataframe.merge(planilha_limpa2.dataframe, how='outer', right_index=True, left_index=True))
+    nota = LimpaNota(inicial)
+    print(nota.dataframe.iloc[])
+
