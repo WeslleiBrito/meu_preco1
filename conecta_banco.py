@@ -29,6 +29,9 @@ class bancoDeDados:
     def seleciona_coluna(self, tabela, coluna):
         return self.cursor.execute(f'SELECT {coluna} from {tabela}').fetchall()
 
+    def atera_valor(self, tabela, novo_valor, chave_pesquisa):
+        return self.cursor.execute(f'')
+
 
 if __name__ == '__main__':
     coluna_codigos = bancoDeDados().seleciona_coluna('estoque', 'codigo')

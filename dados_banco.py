@@ -1,9 +1,6 @@
-from valores import planilhaFinal
 from conecta_banco import bancoDeDados
 
-# planilha = planilhaFinal()
-# planilha_subgrupo = planilha['SubGrupo']
-# subgrupo_planilha = [sub for sub in planilha_subgrupo]
+
 class BuscaDados:
     def __init__(self):
         pass
@@ -29,16 +26,17 @@ class BuscaDados:
         return self.__busca()[4]
 
     def __busca(self):
-
         banco = bancoDeDados()
         base_subgrupo = [sub[0] for sub in banco.seleciona_coluna('base_despesa_fixa', 'descricao')]
         base_quantidade = [qtd[0] for qtd in banco.seleciona_coluna('base_despesa_fixa', 'quantidade')]
         base_custo = [cst[0] for cst in banco.seleciona_coluna('base_despesa_fixa', 'custo')]
         base_faturamento = [fat[0] for fat in banco.seleciona_coluna('base_despesa_fixa', 'faturamento')]
-        base_despesa_total = [dps_total[0] for dps_total in banco.seleciona_coluna('base_despesa_fixa', 'dps_total_subgrupo')]
+        base_despesa_total = [dps_total[0] for dps_total in
+                              banco.seleciona_coluna('base_despesa_fixa', 'dps_total_subgrupo')]
 
         return base_subgrupo, base_quantidade, base_custo, base_faturamento, base_despesa_total
 
 
-
-
+if __name__ == '__main__':
+    busca = BuscaDados()
+    print(busca.banco_quantidade)
