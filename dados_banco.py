@@ -6,11 +6,11 @@ class BuscaDados:
         pass
 
     @property
-    def banco_subgrupos(self):
+    def subgrupos(self):
         return self.__busca()[0]
 
     @property
-    def banco_quantidade(self):
+    def quantidade(self):
         return self.__busca()[1]
 
     @property
@@ -18,11 +18,11 @@ class BuscaDados:
         return self.__busca()[2]
 
     @property
-    def banco_faturamento(self):
+    def faturamento(self):
         return self.__busca()[3]
 
     @property
-    def banco_despesa_total_fixa(self):
+    def despesa_total_fixa(self):
         return self.__busca()[4]
 
     def __busca(self):

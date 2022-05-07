@@ -1,6 +1,6 @@
 from valores import planilhaFinal
 
-class buscaNaPlanilha:
+class BuscaNaPlanilha:
     def __init__(self):
         self.__planilha = planilhaFinal()
 
@@ -10,7 +10,7 @@ class buscaNaPlanilha:
 
     @property
     def subgrupo(self):
-        return [subgrupo for subgrupo in self.planilha['SubGrupo']]
+        return [subgrupo.strip() for subgrupo in self.planilha['SubGrupo']]
 
     @property
     def quantidade(self):
@@ -26,4 +26,4 @@ class buscaNaPlanilha:
 
 
 if __name__ == '__main__':
-    print(buscaNaPlanilha().subgrupo)
+    print(BuscaNaPlanilha().subgrupo)
