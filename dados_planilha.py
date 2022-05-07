@@ -10,19 +10,19 @@ class buscaNaPlanilha:
 
     @property
     def subgrupo(self):
-        return self.planilha['SubGrupo']
+        return [subgrupo for subgrupo in self.planilha['SubGrupo']]
 
     @property
     def quantidade(self):
-        return self.planilha['Quantidade']
+        return [quantidade for quantidade in self.planilha['Quantidade']]
 
     @property
     def custo(self):
-        return self.planilha['Custo']
+        return [custo for custo in self.planilha['Custo']]
 
     @property
     def faturamento(self):
-        return self.planilha['Faturamento']
+        return [faturamento for faturamento in self.planilha['Faturamento']]
 
 
 if __name__ == '__main__':
