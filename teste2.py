@@ -9,3 +9,6 @@ with io.open('base_preco_backup.sql', 'w') as p:
 
 print('Backup salvo')
 conn.close()
+
+
+bd_backup = sqlite3.connect('base_preco_backup.sql')

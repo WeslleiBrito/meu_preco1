@@ -1,7 +1,7 @@
 from conecta_banco import bancoDeDados
 from dados_planilha import BuscaNaPlanilha
 from dados_banco import BuscaDados
-
+from backup_banco import backup
 
 class AtualizaDespesa:
     def __init__(self):
@@ -58,6 +58,7 @@ class AtualizaDespesa:
         return self.__planilha.faturamento
 
     def atualiza(self):
+        backup()
         subgrupo_planilha = self.planilha_subgrupo
         subgrupo_banco = self.banco_sugrupo
         quantidade_planilha = self.planilha_quantidade
