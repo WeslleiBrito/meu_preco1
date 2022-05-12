@@ -1,4 +1,8 @@
 from shutil import copyfile
+from datetime import datetime
+
+
+data = str(datetime.now()).replace('.', '-').replace(':', '-')
 
 def backup():
-    copyfile('base_preco.db', 'backup_banco/base_preco_backup.db')
+    copyfile('base_preco.db', f'backup_banco/base_preco_{data}.db')

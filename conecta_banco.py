@@ -1,7 +1,7 @@
 
 import sqlite3 as sql
 
-class bancoDeDados:
+class BancoDeDados:
 
     def __init__(self):
         self.__banco = self.__conecta()
@@ -15,11 +15,10 @@ class bancoDeDados:
     def banco(self):
         return self.__banco
 
-
     def __conecta(self):
+
         try:
             return sql.connect("base_preco.db")
-
         except Exception as erro:
             raise Exception('Banco de dados inacessível:', erro)
 
@@ -29,14 +28,10 @@ class bancoDeDados:
     def seleciona_coluna(self, tabela, coluna):
         return self.cursor.execute(f'SELECT {coluna} from {tabela}').fetchall()
 
-    def altera_valor(self, tabela, novo_valor, chave_pesquisa):
-
-        return self.cursor.execute(f'')
-
 
 if __name__ == '__main__':
-    coluna_codigos = bancoDeDados().seleciona_coluna('estoque', 'codigo')
-    coluna_subGrupos = bancoDeDados().seleciona_coluna('estoque', 'sub_grupo')
+    coluna_codigos = BancoDeDados().seleciona_coluna('estoque', 'codigo')
+    coluna_subGrupos = BancoDeDados().seleciona_coluna('estoque', 'sub_grupo')
 
     lista_codigos = [codigo[0] for codigo in coluna_codigos]
     lista_subGrupos = [subGrupo[0] for subGrupo in coluna_subGrupos]

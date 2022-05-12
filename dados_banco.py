@@ -1,9 +1,9 @@
-from conecta_banco import bancoDeDados
+from conecta_banco import BancoDeDados
 
 
 class BuscaDados:
     def __init__(self):
-        self.banco = bancoDeDados()
+        self.banco = BancoDeDados()
 
     @property
     def busca(self):

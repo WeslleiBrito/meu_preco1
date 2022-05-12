@@ -1,4 +1,4 @@
-from conecta_banco import bancoDeDados
+from conecta_banco import BancoDeDados
 from dados_planilha import BuscaNaPlanilha
 from dados_banco import BuscaDados
 from backup_banco import backup
@@ -7,7 +7,7 @@ class AtualizaDespesa:
     def __init__(self):
         self.__planilha = BuscaNaPlanilha()
         self.__dados_banco = BuscaDados()
-        self.__banco = bancoDeDados().banco
+        self.__banco = BancoDeDados().banco
 
     @property
     def banco(self):
