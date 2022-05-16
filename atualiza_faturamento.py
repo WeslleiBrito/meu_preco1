@@ -1,9 +1,9 @@
 from conecta_banco import BancoDeDados
 from dados_planilha import BuscaNaPlanilha
 from dados_banco import BuscaDados
-from backup_banco import backup
+from backup_banco import ExecutaBackup
 
-class AtualizaDespesa:
+class AtualizaFaturamento:
     def __init__(self):
         self.__planilha = BuscaNaPlanilha()
         self.__dados_banco = BuscaDados()
@@ -38,10 +38,6 @@ class AtualizaDespesa:
         return self.__dados_banco.faturamento
 
     @property
-    def banco_depesa_fixa_total(self):
-        return self.__dados_banco.despesa_total_fixa
-
-    @property
     def planilha_subgrupo(self):
         return self.__planilha.subgrupo
 
@@ -58,7 +54,7 @@ class AtualizaDespesa:
         return self.__planilha.faturamento
 
     def atualiza(self):
-        backup()
+        ExecutaBackup().backup()
         subgrupo_planilha = self.planilha_subgrupo
         subgrupo_banco = self.banco_sugrupo
         quantidade_planilha = self.planilha_quantidade
@@ -68,7 +64,6 @@ class AtualizaDespesa:
         custo_banco = self.banco_custo
         faturamento_planilha = self.planilha_faturamento
         faturamento_banco = self.banco_faturamento
-        despesa_total = self.banco_depesa_fixa_total
 
         for indice, subgrupo in enumerate(subgrupo_banco):
             if subgrupo in subgrupo_planilha:
@@ -76,17 +71,13 @@ class AtualizaDespesa:
                 total_quantidade = quantidade_planilha[indice_planilha] + quantidade_banco[indice]
                 total_custo = custo_planilha[indice_planilha] + custo_banco[indice]
                 total_faturamento = faturamento_planilha[indice_planilha] + faturamento_banco[indice]
-                print(f'Indice: {indices_banco[indice]} Subgrupo: {subgrupo}, '
-                      f'Quantidade Subgrupo: {quantidade_planilha[indice_planilha]},'
-                      f'Quantidade banco: {quantidade_banco[indice]} ')
 
                 self.cursor.execute(
                     f'UPDATE base_despesa_fixa SET quantidade = {total_quantidade}, custo = {total_custo},'
                     f' faturamento = {total_faturamento} WHERE indice = {indices_banco[indice]}')
 
         self.banco.commit()
-        print('Concluido')
 
 
 if __name__ == '__main__':
-    AtualizaDespesa().atualiza()
+    AtualizaFaturamento().atualiza()

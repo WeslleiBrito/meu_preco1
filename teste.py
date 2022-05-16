@@ -1,18 +1,35 @@
-import sqlite3 as sql
-from datetime import datetime
-
-nome_banco_backup = 'backup_banco/base_preco' + str(datetime.now()).replace('.', '-').replace(':', '-') + '.db'
+from busca_planilha import BuscaPlanilhaExcel
+import pandas as pd
 
 
-class ExecutaBackup:
-
+class CriaDataFrameDespesa:
     def __init__(self):
-        self.__banco_atual = sql.connect('base_preco.db')
-        self.__backup_banco = sql.connect(nome_banco_backup)
+        self.__caminho = BuscaPlanilhaExcel().caminho
 
-    def backup(self):
-        self.__banco_atual.backup(self.__backup_banco)
+    @property
+    def planilha(self):
+        return self.__limpeza_planilha()
+
+    def __data_frame(self):
+        return pd.read_excel(self.__caminho, 'A')
+
+    def __limpeza_planilha(self):
+        planilha = self.__data_frame()
+        planilha.drop(columns=['Unnamed: 5', 'Unnamed: 6'], inplace=True)
+        planilha.columns = ['Despesas', 'Registros', 'Valor', 'Pago', 'A pagar']
+        planilha = planilha.dropna()
+        planilha = planilha.drop(planilha.index[[0, -1]])
+
+        for despesa in planilha['Despesas']:
+            if despesa == '10 - FATURAMENTO':
+                indice_faturamento = planilha[planilha['Despesas'] == '10 - FATURAMENTO'].index
+                planilha.drop(index=indice_faturamento, inplace=True)
+
+        return planilha
 
 
 if __name__ == '__main__':
-    ExecutaBackup().backup()
+    pl = CriaDataFrameDespesa().planilha
+    print(pl)
+
+

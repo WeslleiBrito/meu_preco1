@@ -1,7 +1,7 @@
 from tkinter import filedialog
 
 
-class buscaPlanilhaExcel:
+class BuscaPlanilhaExcel:
     def __init__(self):
         self.__caminho = self.busca()
 
@@ -20,12 +20,12 @@ class buscaPlanilhaCsv:
 
     @property
     def caminho(self):
-        return self.__caminho
+        return str(self.__caminho)
 
     def busca(self):
         return filedialog.askopenfilename(filetypes=(('Arquivo excel', '*.csv'), ('', '')))
 
 
 if __name__ == '__main__':
-    arquivo = buscaPlanilhaCsv()
+    arquivo = BuscaPlanilhaExcel()
     print(arquivo.caminho)

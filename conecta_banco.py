@@ -29,6 +29,7 @@ class BancoDeDados:
         return self.cursor.execute(f'SELECT {coluna} from {tabela}').fetchall()
 
 
+
 if __name__ == '__main__':
     coluna_codigos = BancoDeDados().seleciona_coluna('estoque', 'codigo')
     coluna_subGrupos = BancoDeDados().seleciona_coluna('estoque', 'sub_grupo')

@@ -1,6 +1,6 @@
 import pandas as pd
 import time
-from busca_planilha import buscaPlanilhaExcel, buscaPlanilhaCsv
+from busca_planilha import BuscaPlanilhaExcel, buscaPlanilhaCsv
 
 
 class limpaPlanilhaCsv:
@@ -17,7 +17,7 @@ class limpaPlanilhaCsv:
 
 class valoresExcel:
     def __init__(self):
-        self.__caminho = buscaPlanilhaExcel().caminho
+        self.__caminho = BuscaPlanilhaExcel().caminho
 
     @property
     def caminho(self):

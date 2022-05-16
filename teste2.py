@@ -1,39 +1,54 @@
+import pandas as pd
+from busca_planilha import BuscaPlanilhaExcel
 from conecta_banco import BancoDeDados
-from conecta_banco_backup import ConectaBanco
+from backup_banco import ExecutaBackup
+
+def define_tipo_despesa_retorna_as_despesas():
+    caminho = BuscaPlanilhaExcel().caminho
+    pasta = str(input('Informe o nome da pasta de consulta: '))
+    despesas_nao_localizadas = []
+    while True:
+        escolha = input(f'Escolha o código da despesa [1 - Fixa, 2 - Variável]: ')
+        if escolha.isdigit():
+            if 0 < int(escolha) <= 2:
+                escolha = int(escolha)
+                break
+            else:
+                print('Escolha inválida')
+        else:
+            print('Informe apenas números inteiro')
+    planilha = pd.read_excel(caminho, pasta)
+
+    for codigo, descricao in enumerate(planilha['Descrição']):
+        dps = f'{planilha["Código"][codigo]} - {descricao.strip()}'
+        despesas_nao_localizadas.append(dps)
+    return despesas_nao_localizadas, escolha
 
 
-class BackupFaturamento:
+class ImportaDespesas:
+
     def __init__(self):
-        self.__base_indice = BancoDeDados().seleciona_coluna(coluna='indice', tabela='base_despesa_fixa')
-        self.__backup_indice = ConectaBanco().seleciona_coluna(coluna='indice', tabela='base_despesa_fixa')
-        self.__backup_banco = ConectaBanco().banco
+        funcao = define_tipo_despesa_retorna_as_despesas()
+        self.__despesas = funcao[0]
+        self.__tipo_despesa = funcao[1]
+        self.__banco = BancoDeDados().banco
 
-    @property
-    def base_indice(self):
-        return [indice[0] for indice in self.__base_indice]
+    def atualiza_cadastro_despesas(self):
+        tipo = 'Fixa'
+        if self.__tipo_despesa == 2:
+            tipo = 'Variável'
 
-    @property
-    def backup_indice(self):
-        return [indice[0] for indice in self.__backup_indice]
+        tabela = [descricao[0] for descricao in self.__banco.cursor().execute('SELECT descricao FROM despesas_totais WERE').fetchall()]
 
-    @property
-    def cursor(self):
-        return self.__backup_banco.cursor()
+        for despesa in self.__despesas:
+            if despesa not in tabela:
+                self.__banco.cursor().execute('INSERT INTO despesas_totais (descricao, tipo_despesa) VALUES (?, ?)', (despesa, tipo))
 
-    def __insere_indice_faltante(self):
-        self.cursor.execute('INSERT INTO base_despesa_fixa (descricao, grupo, quantidade, faturamento, custo, dps_total_subgrupo, dps_unit_subgrupo) VALUES (?, ?, ?, ?, ?, ?, ?)',("sub_grupo", "grupo", 0.0, 0.0, 0.0, 0.0, 0.0))
-
-        self.__backup_banco.commit()
-
-    def backup(self):
-        tamanho_dos_bancos = len(self.base_indice) - len(self.backup_indice)
-
-        for y in range(tamanho_dos_bancos):
-            self.__insere_indice_faltante()
-            print(y)
+        self.__banco.commit()
+        self.__banco.cursor().close()
+        self.__banco.close()
 
 
 if __name__ == '__main__':
-    x = BackupFaturamento()
-    x.backup()
-
+    ExecutaBackup().backup()
+    ImportaDespesas().atualiza_cadastro_despesas()
