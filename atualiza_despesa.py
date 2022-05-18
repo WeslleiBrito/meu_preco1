@@ -2,7 +2,7 @@ from busca_planilha import BuscaPlanilhaExcel
 from conecta_banco import BancoDeDados
 from backup_banco import ExecutaBackup
 import pandas as pd
-from teste import nova_despesa_durante_cadastro
+from nova_despesa_na_atualizaca import nova_despesa_durante_cadastro
 
 
 class CriaDataFrameDespesa:
@@ -68,7 +68,7 @@ class CriaDataFrameDespesa:
                 self.cursor.execute(f'UPDATE despesas_totais SET valor=? WHERE descricao=?',
                                     (valor_total, despesa_verifica))
             else:
-                nova_despesa_durante_cadastro(self.banco, self.cursor, despesa_verifica,
+                nova_despesa_durante_cadastro(self.cursor, despesa_verifica,
                                               valor_planilha[despesas_planilha.index(despesa_p)])
 
         self.banco.commit()
