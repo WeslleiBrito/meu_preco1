@@ -1,7 +1,7 @@
 import pandas as pd
-from conecta_banco import bancoDeDados
+from conecta_banco import BancoDeDados
 
-banco = bancoDeDados().banco
+banco = BancoDeDados().banco
 cursor = banco.cursor()
 
 estoque = pd.read_excel("Estoque.xlsx", sheet_name='Estoque')

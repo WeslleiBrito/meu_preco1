@@ -2,6 +2,7 @@ from busca_planilha import BuscaPlanilhaExcel
 from conecta_banco import BancoDeDados
 from backup_banco import ExecutaBackup
 import pandas as pd
+from teste import nova_despesa_durante_cadastro
 
 
 class CriaDataFrameDespesa:
@@ -61,18 +62,19 @@ class CriaDataFrameDespesa:
             else:
                 despesa_verifica = despesa_p[4:]
 
-            if despesa_verifica in despesa_banco and despesa_verifica is not None:
+            if despesa_verifica in despesa_banco:
                 valor_total = valor_planilha[despesas_planilha.index(despesa_p)] + \
                               valor_banco[despesa_banco.index(despesa_verifica)]
                 self.cursor.execute(f'UPDATE despesas_totais SET valor=? WHERE descricao=?',
                                     (valor_total, despesa_verifica))
+            else:
+                nova_despesa_durante_cadastro(self.banco, self.cursor, despesa_verifica,
+                                              valor_planilha[despesas_planilha.index(despesa_p)])
 
         self.banco.commit()
         self.cursor.close()
-        self.banco.cursor()
+        self.banco.close()
 
 
 if __name__ == '__main__':
     pl = CriaDataFrameDespesa().atualiza
-
-

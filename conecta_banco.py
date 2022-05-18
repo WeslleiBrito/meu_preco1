@@ -18,7 +18,7 @@ class BancoDeDados:
     def __conecta(self):
 
         try:
-            return sql.connect(r"\\CAIXABURITE-PC\Users\Public\base_preco.db")
+            return sql.connect(r"base_preco.db")
         except Exception as erro:
             raise Exception('Banco de dados inacessível:', erro)
 
