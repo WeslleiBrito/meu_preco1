@@ -56,7 +56,7 @@ class AtualizaFaturamento:
     def planilha_faturamento(self):
         return self.__planilha.faturamento
 
-    def faturamento_custo_totais(self):
+    def __faturamento_custo_totais(self):
         faturamento_total = round(sum([faturamento for faturamento in self.banco_faturamento]))
         custo_total = round(sum(custo for custo in self.banco_custo))
 
@@ -92,8 +92,11 @@ class AtualizaFaturamento:
                     f' faturamento = {total_faturamento} WHERE indice = {indices_banco[indice]}')
 
         self.banco.commit()
+        self.__faturamento_custo_totais()
 
+        self.cursor.close()
+        self.banco.close()
 
 
 if __name__ == '__main__':
-    AtualizaFaturamento().faturamento_custo_totais()
+    AtualizaFaturamento().atualiza()

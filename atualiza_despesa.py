@@ -3,6 +3,7 @@ from conecta_banco import BancoDeDados
 from backup_banco import ExecutaBackup
 import pandas as pd
 from nova_despesa_na_atualizaca import nova_despesa_durante_cadastro
+from registra_geral import registra_despesa_geral
 
 
 class CriaDataFrameDespesa:
@@ -72,6 +73,7 @@ class CriaDataFrameDespesa:
                                               valor_planilha[despesas_planilha.index(despesa_p)])
 
         self.banco.commit()
+        registra_despesa_geral()
         self.cursor.close()
         self.banco.close()
 
