@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: latin-1 -*-
+
 from conecta_banco import BancoDeDados
 from dados_planilha import BuscaNaPlanilha
 from dados_banco import BuscaDados
@@ -53,6 +56,18 @@ class AtualizaFaturamento:
     def planilha_faturamento(self):
         return self.__planilha.faturamento
 
+    def faturamento_custo_totais(self):
+        faturamento_total = round(sum([faturamento for faturamento in self.banco_faturamento]))
+        custo_total = round(sum(custo for custo in self.banco_custo))
+
+        if self.cursor.execute(f'SELECT indice FROM valores_gerais WHERE indice = 1').fetchall():
+            self.cursor.execute(f'UPDATE valores_gerais SET faturamento = {faturamento_total}, custo = {custo_total} WHERE indice = 1')
+        else:
+            self.cursor.execute(f'INSERT INTO valores_gerais (faturamento, custo) VALUES (?, ?)',
+                                (faturamento_total, custo_total))
+
+        self.banco.commit()
+
     def atualiza(self):
         ExecutaBackup().backup()
         subgrupo_planilha = self.planilha_subgrupo
@@ -79,5 +94,6 @@ class AtualizaFaturamento:
         self.banco.commit()
 
 
+
 if __name__ == '__main__':
-    AtualizaFaturamento().atualiza()
+    AtualizaFaturamento().faturamento_custo_totais()
