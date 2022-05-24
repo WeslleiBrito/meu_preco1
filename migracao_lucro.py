@@ -1,8 +1,8 @@
 import pandas as pd
-from conecta_banco import bancoDeDados
+from conecta_banco import BancoDeDados
 
 caminho = r"mkpsub.xlsx"
-banco = bancoDeDados().banco
+banco = BancoDeDados().banco
 cursor = banco.cursor()
 
 tabela_lucro = pd.read_excel(caminho, sheet_name='mkpsub')

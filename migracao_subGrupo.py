@@ -1,14 +1,18 @@
 import pandas as pd
-from conecta_banco import bancoDeDados
+from conecta_banco import BancoDeDados
+from backup_banco import ExecutaBackup
 
-banco = bancoDeDados().banco
+banco = BancoDeDados().banco
 cursor = banco.cursor()
 
 caminho = "BaseSubGrupo.xlsx"
 
+
 tabela = pd.read_excel(caminho, sheet_name='BaseSubGrupo')
 df = tabela.drop(['Codigo'], axis=1)
 df.fillna(0, inplace=True)
+
+ExecutaBackup().backup()
 
 for linha in range(len(df)):
     sub_grupo = str(df.iloc[linha, 0]).strip()
