@@ -23,6 +23,7 @@ def registra_despesa_geral():
 
     tipo_despesa = [tipo[0] for tipo in cursor.execute('SELECT tipo_despesa FROM despesas_totais').fetchall()]
     valor_despesa = [despesa[0] for despesa in cursor.execute('SELECT valor FROM despesas_totais').fetchall()]
+    faturamento = cursor.execute('SELECT faturamento FROM valores_gerais').fetchall()[0]
 
     for posicao, tipo in enumerate(tipo_despesa):
         if tipo == 'Fixa':
@@ -32,14 +33,16 @@ def registra_despesa_geral():
 
     fixa_mensal = round(fixa / meses)
     variavel_mensal = round(variavel / meses)
+    variavel_percentual = round(variavel / faturamento[0], 2)
 
     if cursor.execute(f'SELECT indice FROM valores_gerais WHERE indice = 1').fetchall():
         cursor.execute(
             f'UPDATE valores_gerais SET despesa_fixa_total = {fixa}, despesa_variavel_total = {variavel}, '
-            f'numero_meses = {meses}, despesa_fixa_mensal = {fixa_mensal}, despesa_variavel_mensal = {variavel_mensal} WHERE indice = 1')
+            f'numero_meses = {meses}, despesa_fixa_mensal = {fixa_mensal}, despesa_variavel_mensal = {variavel_mensal}, despesa_variavel_percentual = {variavel_percentual} WHERE indice = 1')
     else:
-        cursor.execute(f'INSERT INTO valores_gerais (despesa_fixa_total, despesa_variavel_total, despesa_fixa_mensal, despesa_variavel_mensal, numero_meses) VALUES (?, ?, ?)',
-                       (fixa, variavel, fixa_mensal, variavel_mensal, meses))
+        cursor.execute(
+            f'INSERT INTO valores_gerais (despesa_fixa_total, despesa_variavel_total, despesa_variavel_mensal, despesa_fixa_mensal, despesa_variavel_percentual, numero_meses) VALUES (?, ?, ?)',
+            (fixa, variavel, fixa_mensal, variavel_mensal, variavel_percentual, meses))
     banco.commit()
 
 
