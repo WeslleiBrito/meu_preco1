@@ -23,18 +23,28 @@ class BancoDeDados:
             raise Exception('Banco de dados inacessível:', erro)
 
     def seleciona_tabela(self, nome_tabela):
-        return self.cursor.execute(f'SELECT * FROM {nome_tabela}').fetchall()
+
+        tabela = self.cursor.execute(f'SELECT * FROM {nome_tabela}').fetchall()
+        self.cursor.close()
+        self.banco.close()
+
+        return tabela
 
     def seleciona_coluna(self, tabela, coluna):
-        return self.cursor.execute(f'SELECT {coluna} from {tabela}').fetchall()
+
+        coluna_banco = self.cursor.execute(f'SELECT {coluna} from {tabela}').fetchall()
+        self.cursor.close()
+        self.banco.close()
+
+        return [valor[0] for valor in coluna_banco]
 
 
 if __name__ == '__main__':
     coluna_codigos = BancoDeDados().seleciona_coluna('despesas_totais', 'descricao')
     coluna_subGrupos = BancoDeDados().seleciona_coluna('despesas_totais', 'valor')
 
-    lista_codigos = [codigo[0] for codigo in coluna_codigos]
-    lista_subGrupos = [subGrupo[0] for subGrupo in coluna_subGrupos]
+    lista_codigos = coluna_codigos
+    lista_subGrupos = coluna_subGrupos
     print(lista_codigos)
     print(lista_subGrupos)
     if '20002' in lista_codigos:

@@ -47,4 +47,4 @@ def registra_despesa_geral():
 
 
 if __name__ == '__main__':
-    registra_despesa_geral()
+    print(calcula_meses())

@@ -37,13 +37,12 @@ class BuscaDados:
 
         dados_do_banco = []
 
-        base_subgrupo = [sub[0] for sub in self.banco.seleciona_coluna('base_despesa_fixa', 'descricao')]
-        base_quantidade = [qtd[0] for qtd in self.banco.seleciona_coluna('base_despesa_fixa', 'quantidade')]
-        base_custo = [cst[0] for cst in self.banco.seleciona_coluna('base_despesa_fixa', 'custo')]
-        base_faturamento = [fat[0] for fat in self.banco.seleciona_coluna('base_despesa_fixa', 'faturamento')]
-        base_despesa_total = [dps_total[0] for dps_total in
-                              self.banco.seleciona_coluna('base_despesa_fixa', 'dps_total_subgrupo')]
-        base_indices = [ind[0] for ind in self.banco.seleciona_coluna('base_despesa_fixa', 'indice')]
+        base_subgrupo = self.banco.seleciona_coluna('base_despesa_fixa', 'descricao')
+        base_quantidade = self.banco.seleciona_coluna('base_despesa_fixa', 'quantidade')
+        base_custo = self.banco.seleciona_coluna('base_despesa_fixa', 'custo')
+        base_faturamento = self.banco.seleciona_coluna('base_despesa_fixa', 'faturamento')
+        base_despesa_total = self.banco.seleciona_coluna('base_despesa_fixa', 'dps_total_subgrupo')
+        base_indices = self.banco.seleciona_coluna('base_despesa_fixa', 'indice')
 
         for sub_grupo in base_subgrupo:
 
