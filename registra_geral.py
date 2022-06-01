@@ -4,7 +4,7 @@ from math import floor
 
 
 def calcula_meses():
-    inicio_contagem = datetime.strptime('2021-03-01', '%Y-%m-%d')
+    inicio_contagem = datetime.strptime('2020-08-01', '%Y-%m-%d')
 
     fim_contagem = datetime.strptime(str(datetime.today().date()), '%Y-%m-%d')
 
