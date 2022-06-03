@@ -11,11 +11,10 @@ class LocalizaNotaEntrada:
         return self.__caminho
 
     def seleciona_caminho_nota_entrada(self):
-        caminho = filedialog.askopenfilename(title='Localizar nota entrada',
-                                             filetypes=(('Arquivo Excel', '*.xlsx'), ('', '')), initialdir=self.__inicial)
-        if caminho:
-            return caminho
-        return False
+
+        return filedialog.askopenfilename(title='Localizar nota entrada',
+                                          filetypes=(('Arquivo Excel', '*.xlsx'), ('', '')),
+                                          initialdir=self.__inicial)
 
 
 if __name__ == '__main__':

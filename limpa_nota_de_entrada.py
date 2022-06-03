@@ -2,6 +2,7 @@
 
 from localiza_nota import LocalizaNotaEntrada
 import pandas as pd
+from correcao_aba_excel import salva_arquivo_corretamente
 
 
 class LimpaNotaEntrada(object):
@@ -17,10 +18,18 @@ class LimpaNotaEntrada(object):
             return caminho
         else:
             return False
+    @property
+    def caminho(self):
+        return self.__caminho
 
     def limpaPlanilha(self):
-        if self.__caminho:
-            planilha_bruta = pd.read_excel(self.__caminho, sheet_name='A')
+        caminho = self.caminho
+
+        if caminho:
+
+            salva_arquivo_corretamente(caminho)
+
+            planilha_bruta = pd.read_excel(caminho, sheet_name='A')
 
             if planilha_bruta.iloc[2, 0].strip() == 'Filtro:':
                 planilha_editada = planilha_bruta.drop(index=[0, 1, 2], columns=['Unnamed: 10', 'Unnamed: 11'])
@@ -40,9 +49,6 @@ class LimpaNotaEntrada(object):
                                                     'Margem', 'Vr. Venda Novo'], axis=1)
 
             return planilha_limpa
-
-        else:
-            return False
 
 
 if __name__ == '__main__':
