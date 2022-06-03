@@ -1,5 +1,4 @@
 import pandas as pd
-import time
 from busca_planilha import BuscaPlanilhaExcel, buscaPlanilhaCsv
 
 
@@ -93,7 +92,6 @@ def planilhaFinal():
 
     sub_grupos_total = planExcel.sub_grupos
     sub_grupos = planExcel.sub_grupo_unitario
-    grupos = planExcel.grupos
     quantidades = planExcel.quantidades
     faturamentos = planExcel.faturamentos
     custos = planExcel.custo
@@ -117,7 +115,7 @@ def planilhaFinal():
         valor = 0.0
         cst = 0.0
         qtd = 0.0
-    dados = dict()
+
     for x in range(0, len(sub_grupos)):
         dados = [sub_grupos[x], quantidade_subgrupos[f'{sub_grupos[x]}'], custo_subgrupos[f'{sub_grupos[x]}'],
                  valores_subgrupos[f'{sub_grupos[x]}']]

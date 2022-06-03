@@ -1,5 +1,5 @@
 import pandas as pd
-from localiza_nota import localizaNotaEntrada
+from localiza_nota import LocalizaNotaEntrada
 
 
 class recebeNota:
@@ -25,7 +25,7 @@ class recebeNota:
         return self.__gera_dataframe()
 
     def busca_caminho(self):
-        return localizaNotaEntrada(self.caminho_inicial).arquivo
+        return LocalizaNotaEntrada(self.caminho_inicial).caminho
 
     def __gera_dataframe(self):
         if self.caminho_arquivo:
