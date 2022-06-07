@@ -1,8 +1,8 @@
 # -*- coding: latin-1 -*-
 
-from localiza_nota import LocalizaNotaEntrada
 import pandas as pd
 from correcao_aba_excel import salva_arquivo_corretamente
+from busca_planilha import BuscaPlanilhaExcel
 
 
 class LimpaNotaEntrada(object):
@@ -12,7 +12,7 @@ class LimpaNotaEntrada(object):
         self.__caminho = self.__nota_selecionada()
 
     def __nota_selecionada(self):
-        caminho = LocalizaNotaEntrada().caminho
+        caminho = BuscaPlanilhaExcel().caminho
 
         if caminho:
             return caminho

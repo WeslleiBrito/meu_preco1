@@ -1,4 +1,5 @@
 from tkinter import filedialog
+from correcao_aba_excel import salva_arquivo_corretamente
 
 
 class BuscaPlanilhaExcel:
@@ -10,7 +11,9 @@ class BuscaPlanilhaExcel:
         return self.__caminho
 
     def busca(self):
-        return filedialog.askopenfilename(filetypes=(('Arquivo excel', '*.xlsx'), ('', '')))
+        caminho = filedialog.askopenfilename(filetypes=(('Arquivo excel', '*.xlsx'), ('', '')))
+        salva_arquivo_corretamente(caminho)
+        return caminho
 
 
 class buscaPlanilhaCsv:

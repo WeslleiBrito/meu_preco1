@@ -1,10 +1,10 @@
 import pandas as pd
 import pandas as df
-from localiza_nota import LocalizaNotaEntrada
+from busca_planilha import BuscaPlanilhaExcel
 
 
 # caminho_planilha = r"D:\Usuário\wesll\Desktop\Criação de preços\ROCHA FORTE 669636.xlsx"
-caminho_planilha = LocalizaNotaEntrada('').caminho
+caminho_planilha = BuscaPlanilhaExcel().caminho
 
 planilha_original = pd.read_excel(caminho_planilha, sheet_name='A')
 

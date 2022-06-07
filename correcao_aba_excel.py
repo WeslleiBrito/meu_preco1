@@ -2,7 +2,6 @@
 import pyperclip as pc
 import time
 import pyautogui as gui
-from localiza_nota import LocalizaNotaEntrada
 
 
 def salva_arquivo_corretamente(caminho, pausa=6):
@@ -17,4 +16,3 @@ def salva_arquivo_corretamente(caminho, pausa=6):
         time.sleep(pausa)
         gui.hotkey('ctrl', 'b')
         gui.hotkey('alt', 'f4')
-

@@ -1,5 +1,5 @@
 import pandas as pd
-from localiza_nota import LocalizaNotaEntrada
+from busca_planilha import BuscaPlanilhaExcel
 
 
 class recebeNota:
@@ -25,7 +25,7 @@ class recebeNota:
         return self.__gera_dataframe()
 
     def busca_caminho(self):
-        return LocalizaNotaEntrada(self.caminho_inicial).caminho
+        return BuscaPlanilhaExcel().caminho
 
     def __gera_dataframe(self):
         if self.caminho_arquivo:
@@ -36,3 +36,4 @@ if __name__ == '__main__':
     inicial = r'C:\Users\9010\Desktop\Criação de preços'
     planilha = recebeNota(inicial, 'A')
     print(planilha.dataframe)
+
