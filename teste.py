@@ -1,21 +1,57 @@
 #!/usr/bin/python
 # -*- coding: latin-1 -*-
 
-import mysql.connector
+from conexao_banco import conecta_banco
+
+banco = conecta_banco()
+cursor = banco.cursor()
 
 
-config = {'host': '192.168.15.13',
-          'database': 'clarionerp',
-          'user': 'burite',
-          'password': 'burite123',
-          'port': '3307'}
+class Despesas:
 
-conn = mysql.connector.connect(**config)
-cursor = conn.cursor()
+    def __init__(self, lista_variavel):
+        self.__banco = conecta_banco()
+        self.__ls_variavel = lista_variavel
+
+    @property
+    def banco(self):
+        return self.__banco
+
+    @property
+    def cursor(self):
+        return self.banco.cursor()
+
+    @property
+    def despesa_total(self):
+        return self.__despesa_total()
+
+    def __despesa_total(self):
+        cr = self.cursor
+        cr.execute('SELECT DATE_FORMAT(rateio_dt_pagamento,"%d%/%m%/%Y"), rateio_tipodesp, '
+                   'rateio_tpdespesanome, '
+                   ' rateio_vlr_pagamento FROM pagar_rateio')
+
+        return [despesa for despesa in cr.fetchall()]
+
+    def separador_despesas(self):
+
+        despesa_fixa = dict()
+        despesa_variavel = dict([])
+
+        despesa_all = self.__despesa_total()
+
+        for cont, despesa in enumerate(despesa_all):
+            if despesa[0]:
+                if despesa[1] in self.__ls_variavel and despesa[1] != 10:
+                    despesa_variavel[f'{despesa[1]}'] += despesa[3]
+                elif despesa[1] != 10:
+                    despesa_fixa[f'{despesa[1]}'] += despesa[3]
+
+        return despesa_fixa, despesa_variavel
+
 
 cursor.execute('SELECT DATE_FORMAT(rateio_dt_pagamento,"%d%/%m%/%Y"), rateio_tipodesp, rateio_tpdespesanome,'
                ' rateio_vlr_pagamento FROM pagar_rateio')
-
 
 lista_des_variavel = [2, 22, 23]
 
@@ -23,7 +59,6 @@ despesas = [dados for dados in cursor.fetchall() if dados[0]]
 
 despesa_fixa = 0.0
 despesa_variavel = 0.0
-
 
 for d in despesas:
     if d[0]:
@@ -33,7 +68,6 @@ for d in despesas:
         elif d[1] in lista_des_variavel and d[1] != 10:
             if d[3]:
                 despesa_variavel += d[3]
-
 
 print(f'Despesa Fixa: {round(despesa_fixa)} / Despesa variável: {round(despesa_variavel)}')
 
@@ -80,23 +114,4 @@ for ch in dict_subgrupo.keys():
 for vr_sub in dict_valor_subgrupo.items():
     print(vr_sub)
 
-# for codigo in codigos:
-#     for index, dados in enumerate(tabela_all):
-#         if dados[1] == codigo:
-#             qtd += quantidade[index]
-#             faturamento_produto += total[index]
-#             nome = produtos[index]
-#
-#     dps = round(((faturamento_produto / faturamento_total) * despesa_fixa) / qtd, 2)
-#     print(f'Codigo: {codigo}, Quantidade: {qtd} Nome: {nome}, Total: {faturamento_produto}, Despesa Fixa: {dps}')
-#     faturamento_produto = 0.0
-#     qtd = 0.0
-#
-# print(faturamento_total)
-
-conn.close()
-
-
-
-
-
+banco.close()
