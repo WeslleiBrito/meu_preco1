@@ -1,7 +1,7 @@
 from conexao_banco import conecta_banco
 
 
-class TabelasBanco:
+class FaturamentoSubgrupos:
     def __init__(self):
         self.__banco = conecta_banco()
 
@@ -48,12 +48,13 @@ class TabelasBanco:
 
         cursor = self.banco.cursor()
 
-        cursor.execute('SELECT venda, produto, qtd, total, descricao FROM venda_item')
+        cursor.execute('SELECT venda, produto, qtd, total, descricao, qtd_devolvida FROM venda_item')
         tabela_venda_item = cursor.fetchall()
 
         codigo_venda = [cod[1] for cod in tabela_venda_item]
         quantidade_venda = [qtd[2] for qtd in tabela_venda_item]
         total_venda = [total[3] for total in tabela_venda_item]
+        quantidade_devolvida = [qtd_d[5] for qtd_d in tabela_venda_item]
 
         cursor.execute('SELECT prod_cod, prod_dsubgrupo FROM produto')
         tabela_produto = cursor.fetchall()
@@ -68,15 +69,17 @@ class TabelasBanco:
 
         for indice, cdg in enumerate(codigo_venda):
             posicao = codigo_produto.index(cdg)
-            faturamento_subgrupo_total[f'{subgrupo_produto[posicao]}'][0] += \
-                total_venda[indice]
-            faturamento_subgrupo_total[f'{subgrupo_produto[posicao]}'][1] += \
-                quantidade_venda[indice]
+            valor_faturamento = (total_venda[indice] / quantidade_venda[indice]) * (quantidade_venda[indice] -
+                                                                                    quantidade_devolvida[indice])
+            faturamento_subgrupo_total[f'{subgrupo_produto[posicao]}'][0] += round(valor_faturamento, 2)
+            faturamento_subgrupo_total[f'{subgrupo_produto[posicao]}'][1] += quantidade_venda[indice] - quantidade_devolvida[indice]
 
+        self.banco.close()
         return faturamento_subgrupo_total
 
 
 if __name__ == '__main__':
-    tabelas = TabelasBanco()
+    tabelas = FaturamentoSubgrupos()
+    for sub_grupo in tabelas.faturamento_subgrupo.items():
+        print(sub_grupo)
 
-    print(tabelas.faturamento_subgrupo)
