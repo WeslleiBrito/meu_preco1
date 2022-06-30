@@ -1,85 +1,19 @@
-from conexao_banco import conecta_banco
+from faturamento_subgrupos import FaturamentoSubgrupos
+from despesas import Despesas
 
+faturamentos = FaturamentoSubgrupos().faturamento_subgrupo
+despesas_variaveis = ['FATURAMENTO', 'CMV', 'RH(CMV)', 'RH(CV)', 'TRANSPORTE(CV)', 'TRANSPORTES (CMV)']
+despesas = Despesas(despesas_variaveis).despesa_total
 
-class FaturamentoSubgrupos:
-    def __init__(self):
-        self.__banco = conecta_banco()
+despesa_subgrupo = dict()
 
-    @property
-    def banco(self):
-        return self.__banco
+faturamento_total = sum([venda[0] for venda in faturamentos.values()])
 
-    @property
-    def faturamento_subgrupo(self):
-        return self.__faturamento_subgrupo()
-
-    @property
-    def tabela_cadastro_produto(self):
-        return self.__tabela_cadastro_produto()
-
-    @property
-    def tabela_venda(self):
-        return self.__tabela_venda()
-
-    def __tabela_venda(self):
-        cursor = self.banco.cursor()
-
-        cursor.execute('SELECT venda, produto, qtd, total, descricao FROM venda_item')
-        tabela_venda_item = cursor.fetchall()
-
-        codigo_venda = [cod[1] for cod in tabela_venda_item]
-        quantidade_venda = [qtd[2] for qtd in tabela_venda_item]
-        total_venda = [total[3] for total in tabela_venda_item]
-
-        return codigo_venda, quantidade_venda, total_venda
-
-    def __tabela_cadastro_produto(self):
-
-        cursor = self.banco.cursor()
-        cursor.execute('SELECT prod_cod, prod_dsubgrupo FROM produto')
-        tabela_produto = cursor.fetchall()
-
-        codigo_produto = [codigo[0] for codigo in tabela_produto]
-        subgrupo_produto = [subgrupo[1] for subgrupo in tabela_produto]
-
-        return codigo_produto, subgrupo_produto
-
-    def __faturamento_subgrupo(self):
-
-        cursor = self.banco.cursor()
-
-        cursor.execute('SELECT venda, produto, qtd, total, descricao, qtd_devolvida FROM venda_item')
-        tabela_venda_item = cursor.fetchall()
-
-        codigo_venda = [cod[1] for cod in tabela_venda_item]
-        quantidade_venda = [qtd[2] for qtd in tabela_venda_item]
-        total_venda = [total[3] for total in tabela_venda_item]
-        quantidade_devolvida = [qtd_d[5] for qtd_d in tabela_venda_item]
-
-        cursor.execute('SELECT prod_cod, prod_dsubgrupo FROM produto')
-        tabela_produto = cursor.fetchall()
-
-        codigo_produto = [codigo[0] for codigo in tabela_produto]
-        subgrupo_produto = [subgrupo[1] for subgrupo in tabela_produto]
-
-        faturamento_subgrupo_total = dict()
-
-        for sub in subgrupo_produto:
-            faturamento_subgrupo_total[sub] = [0.0, 0.0]
-
-        for indice, cdg in enumerate(codigo_venda):
-            posicao = codigo_produto.index(cdg)
-            valor_faturamento = (total_venda[indice] / quantidade_venda[indice]) * (quantidade_venda[indice] -
-                                                                                    quantidade_devolvida[indice])
-            faturamento_subgrupo_total[f'{subgrupo_produto[posicao]}'][0] += round(valor_faturamento, 2)
-            faturamento_subgrupo_total[f'{subgrupo_produto[posicao]}'][1] += quantidade_venda[indice] - quantidade_devolvida[indice]
-
-        self.banco.close()
-        return faturamento_subgrupo_total
-
-
-if __name__ == '__main__':
-    tabelas = FaturamentoSubgrupos()
-    for sub_grupo in tabelas.faturamento_subgrupo.items():
-        print(sub_grupo)
-
+for fatura in faturamentos:
+    if faturamentos[fatura][0] > 0:
+        calculo = (faturamentos[fatura][0] / faturamento_total) * despesas['Despesa Fixa'] / faturamentos[fatura][1]
+        despesa_subgrupo[fatura] = round(calculo, 2)
+    else:
+        despesa_subgrupo[fatura] = 0.0
+for desp in despesa_subgrupo.items():
+    print(desp)
