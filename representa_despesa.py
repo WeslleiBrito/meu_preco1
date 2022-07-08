@@ -2,7 +2,7 @@ from faturamento_subgrupos import FaturamentoSubgrupo
 from despesas import Despesas
 
 
-class DespesaFixaSubgrupo:
+class DespesaSubgrupo:
 
     def __init__(self):
         self.__fatura_subgrupo = FaturamentoSubgrupo().faturamento_por_subgrupo
@@ -35,4 +35,4 @@ class DespesaFixaSubgrupo:
 
 
 if __name__ == '__main__':
-    print(DespesaFixaSubgrupo().despesa_variavel)
+    print(DespesaSubgrupo().despesa_variavel)
