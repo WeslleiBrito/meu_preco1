@@ -11,7 +11,7 @@ class CriaDataFrameDespesa:
     def __init__(self):
         self.__caminho = BuscaPlanilhaExcel().caminho
         self.__banco = BancoDeDados().banco
-        self.__cursor = self.__banco.cursor()
+        self.__cursor = self.__banco.cursor_sqlite()
 
     @property
     def planilha(self):

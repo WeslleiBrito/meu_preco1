@@ -45,14 +45,14 @@ class ImportaDespesas:
         if self.__tipo_despesa == 2:
             tipo = 'Variável'
 
-        tabela = [descricao[0] for descricao in self.__banco.cursor().execute('SELECT descricao FROM despesas_totais WERE').fetchall()]
+        tabela = [descricao[0] for descricao in self.__banco.cursor_sqlite().execute('SELECT descricao FROM despesas_totais WERE').fetchall()]
 
         for despesa in self.__despesas:
             if despesa not in tabela:
-                self.__banco.cursor().execute('INSERT INTO despesas_totais (descricao, tipo_despesa) VALUES (?, ?)', (despesa, tipo))
+                self.__banco.cursor_sqlite().execute('INSERT INTO despesas_totais (descricao, tipo_despesa) VALUES (?, ?)', (despesa, tipo))
 
         self.__banco.commit()
-        self.__banco.cursor().close()
+        self.__banco.cursor_sqlite().close()
         self.__banco.close()
 
 

@@ -19,7 +19,7 @@ def registra_despesa_geral():
     meses = calcula_meses()
 
     banco = BancoDeDados().banco
-    cursor = banco.cursor()
+    cursor = banco.cursor_sqlite()
 
     tipo_despesa = [tipo[0] for tipo in cursor.execute('SELECT tipo_despesa FROM despesas_totais').fetchall()]
     valor_despesa = [despesa[0] for despesa in cursor.execute('SELECT valor FROM despesas_totais').fetchall()]

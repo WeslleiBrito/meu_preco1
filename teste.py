@@ -4,7 +4,7 @@
 from conexao_banco import conecta_banco
 
 banco = conecta_banco()
-cursor = banco.cursor()
+cursor = banco.cursor_sqlite()
 
 
 class Despesas:
@@ -19,7 +19,7 @@ class Despesas:
 
     @property
     def cursor(self):
-        return self.banco.cursor()
+        return self.banco.cursor_sqlite()
 
     @property
     def despesa_total(self):

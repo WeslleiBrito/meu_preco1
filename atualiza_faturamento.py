@@ -18,7 +18,7 @@ class AtualizaFaturamento:
 
     @property
     def cursor(self):
-        return self.banco.cursor()
+        return self.banco.cursor_sqlite()
 
     @property
     def banco_indice(self):

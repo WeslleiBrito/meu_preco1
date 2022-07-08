@@ -8,7 +8,7 @@ class Faturamento:
 
     @property
     def cursor(self):
-        return self.__banco.cursor()
+        return self.__banco.cursor_sqlite()
 
     @property
     def total(self):

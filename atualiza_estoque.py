@@ -20,11 +20,11 @@ def atualiza_lista_de_estoque():
         for codigo in produtos_nao_cadastrados:
             descricao = descricao_estoque_sistema[codigo_estoque_sistema.index(codigo)]
             subgrupo = subgrupo_estoque_sistema[codigo_estoque_sistema.index(codigo)]
-            banco.cursor().execute("INSERT INTO estoque (codigo, descricao, sub_grupo) VALUES (?, ?, ?)",
-                                   (codigo, descricao, subgrupo))
+            banco.cursor_sqlite().execute("INSERT INTO estoque (codigo, descricao, sub_grupo) VALUES (?, ?, ?)",
+                                          (codigo, descricao, subgrupo))
             print(f'Produto "{descricao}" cadastrado.')
         banco.commit()
-        banco.cursor().close()
+        banco.cursor_sqlite().close()
         banco.close()
     else:
         print('Banco já atualizado, nenhum novo produto encontrado.')

@@ -1,28 +1,38 @@
-from conecta_banco import BancoDeDados
-
-banco = BancoDeDados().banco
-cursor = banco.cursor()
+from faturamento_subgrupos import FaturamentoSubgrupo
+from despesas import Despesas
 
 
-def representador():
-    valores_gerais = cursor.execute('SELECT * FROM valores_gerais').fetchall()[0]
-    base_despesa_fixa = cursor.execute('SELECT * FROM base_despesa_fixa').fetchall()
+class DespesaFixaSubgrupo:
 
-    dicionario = {}
-    representa_fixa = valores_gerais[3] / valores_gerais[1]
+    def __init__(self):
+        self.__fatura_subgrupo = FaturamentoSubgrupo().faturamento_por_subgrupo
+        self.__faturamento_total = FaturamentoSubgrupo().faturamento_total
+        self.__despesa_fixa_total = Despesas().fixa
+        self.__despesa_variavel_total = Despesas().variavel
 
-    for subs in base_despesa_fixa:
-        dicionario[str(subs[1])] = [subs[4], subs[3]]
+    @property
+    def despesa_fixa_subgrupo(self):
+        return self.__despesa_fixa_subgrupo()
 
-    for chave in dicionario:
-        faturamento = dicionario[chave][0]
-        quantidade = dicionario[chave][1]
+    @property
+    def despesa_variavel(self):
+        return self.__despesa_variavel()
 
-        if quantidade > 0.0:
-            despesa_total = faturamento * representa_fixa
-            despesa_unitaria = round(despesa_total / quantidade, 2)
+    def __despesa_fixa_subgrupo(self):
+        despesa_subgrupo = dict()
 
-            cursor.execute(f'UPDATE base_despesa_fixa SET dps_total_subgrupo=?, dps_unit_subgrupo=? WHERE descricao=?',
-                           (round(despesa_total), despesa_unitaria, chave))
+        for item in self.__fatura_subgrupo:
 
-    banco.commit()
+            faturamento_subgrupo = self.__fatura_subgrupo[item]['faturamento']
+            quantidade = self.__fatura_subgrupo[item]['quantidade']
+            if faturamento_subgrupo:
+                despesa_subgrupo[item] = round(((faturamento_subgrupo / self.__faturamento_total) * self.__despesa_fixa_total) / quantidade, 2)
+
+        return despesa_subgrupo
+
+    def __despesa_variavel(self):
+        return round(self.__despesa_variavel_total / self.__faturamento_total, 2)
+
+
+if __name__ == '__main__':
+    print(DespesaFixaSubgrupo().despesa_variavel)

@@ -3,7 +3,7 @@ from conecta_banco import BancoDeDados
 
 caminho = r"mkpsub.xlsx"
 banco = BancoDeDados().banco
-cursor = banco.cursor()
+cursor = banco.cursor_sqlite()
 
 tabela_lucro = pd.read_excel(caminho, sheet_name='mkpsub')
 

@@ -1,4 +1,6 @@
 import mysql.connector
+from rateio_despesa_fixa import DespesasRateio
+from faturamento_subgrupos import FaturamentoSubgrupos
 
 
 config = {'host': '192.168.15.13',
@@ -8,7 +10,7 @@ config = {'host': '192.168.15.13',
           'port': '3307'}
 
 conn = mysql.connector.connect(**config)
-cursor = conn.cursor()
+cursor = conn.cursor_sqlite()
 
 cursor.execute("""select 
 N.numero Num_NF, 
@@ -41,7 +43,36 @@ WHERE N.`status` = 'F' and F.situacao = '0'
 order by F.codigo, I.nitem""")
 
 dados = cursor.fetchall()
+subgrupos = []
+cursor.execute('SELECT prod_cod, prod_dsubgrupo FROM produto')
+tabela_produto = cursor.fetchall()
+codigo = [cd[0] for cd in tabela_produto]
+subgrupo = [sub[1] for sub in tabela_produto]
 
-print(dados[-1])
+numero_nota = set([numero[0] for numero in dados])
+numero_nota = [num for num in numero_nota]
+
+nota_compra = dict()
+
+despesas_variaveis = ['FATURAMENTO', 'CMV', 'RH(CMV)', 'RH(CV)', 'TRANSPORTE(CV)', 'TRANSPORTES (CMV)']
+despesas_fixa = DespesasRateio(despesas_variaveis).total_despesa_sub_grupo
+despesa_variavel = DespesasRateio(despesas_variaveis).despesa_variavel
+faturamento_sub = FaturamentoSubgrupos().faturamento_por_subgrupo
+
+
+for item in dados:
+
+    if item[0] == numero_nota[-1]:
+        fixa = despesas_fixa[subgrupo[codigo.index(item[4])]]
+        desconto_subgrupo = faturamento_sub[subgrupo[codigo.index(item[4])]][3]
+
+        if desconto_subgrupo < 0.15:
+            desconto_subgrupo = 0.15
+
+        nota_compra[item[5]] = [item[4], item[15], item[5], item[19], fixa, desconto_subgrupo]
+
+
+print(nota_compra)
+
 
 conn.close()

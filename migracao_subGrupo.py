@@ -3,7 +3,7 @@ from conecta_banco import BancoDeDados
 from backup_banco import ExecutaBackup
 
 banco = BancoDeDados().banco
-cursor = banco.cursor()
+cursor = banco.cursor_sqlite()
 
 caminho = "BaseSubGrupo.xlsx"
 

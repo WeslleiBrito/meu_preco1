@@ -1,7 +1,7 @@
 from faturamento_subgrupos import FaturamentoSubgrupos
 from despesas import Despesas
 
-faturamentos = FaturamentoSubgrupos().faturamento_subgrupo
+faturamentos = FaturamentoSubgrupos().faturamento_por_subgrupo
 despesas_variaveis = ['FATURAMENTO', 'CMV', 'RH(CMV)', 'RH(CV)', 'TRANSPORTE(CV)', 'TRANSPORTES (CMV)']
 despesas = Despesas(despesas_variaveis).despesa_total
 

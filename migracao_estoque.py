@@ -2,7 +2,7 @@ import pandas as pd
 from conecta_banco import BancoDeDados
 
 banco = BancoDeDados().banco
-cursor = banco.cursor()
+cursor = banco.cursor_sqlite()
 
 estoque = pd.read_excel("Estoque.xlsx", sheet_name='Estoque')
 
