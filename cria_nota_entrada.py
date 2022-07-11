@@ -8,7 +8,7 @@ class CriaNotaEntrada:
         from dados_fornecedor import DadosFornecedor
         from representa_despesa import DespesaSubgrupo
 
-        self.__dados_sistema = DadosSistema().dados_sistema
+        self.__dados_sistema = DadosSistema(numero_nota=numero_nota).dados_sistema
         self.__dados_fornecedor = DadosFornecedor(numero_nota=numero_nota).nota
 
         if comissao > 0:

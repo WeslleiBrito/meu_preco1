@@ -1,9 +1,10 @@
-from conexao_banco import conecta_banco
 import datetime
 
+class DadosFornecedor:
 
-class NotaEntrada:
     def __init__(self, numero_nota=0):
+        from conexao_banco import conecta_banco
+
         self.__banco = conecta_banco()
         self.__cursor = self.__banco.cursor()
         self.__numero_nota = numero_nota
@@ -107,5 +108,5 @@ order by F.codigo, I.nitem
 
 
 if __name__ == '__main__':
-    nfc = NotaEntrada(250920).nota
+    nfc = DadosFornecedor().nota
     print(nfc)

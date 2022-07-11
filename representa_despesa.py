@@ -35,4 +35,4 @@ class DespesaSubgrupo:
 
 
 if __name__ == '__main__':
-    print(DespesaSubgrupo().despesa_variavel)
+    print(DespesaSubgrupo().despesa_fixa_subgrupo)
