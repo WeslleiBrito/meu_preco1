@@ -34,9 +34,10 @@ class CriaNotaEntrada:
             despesa_fixa = dados_unificados['despesa_fixa'][indice]
             lucro = dados_unificados['lucro'][indice]
             desconto = dados_unificados['desconto'][indice]
+            valor_monetario = custo + despesa_fixa
 
-            preco_venda = round(custo + despesa_fixa /
-                                (1 - (self.__comissao + self.__despesa_variavel + desconto + lucro)), 1)
+            valor_percentual = 1 - (self.__comissao + self.__despesa_variavel + desconto + lucro)
+            preco_venda = round(valor_monetario / valor_percentual, 1)
 
             calulos_venda['despesa_variavel'].append(round(preco_venda * self.__despesa_variavel, 2))
             calulos_venda['valor_desconto'].append(round(preco_venda * desconto, 2))
@@ -50,3 +51,4 @@ class CriaNotaEntrada:
 if __name__ == '__main__':
     nota_entrada = CriaNotaEntrada().nota_entrada
     print(nota_entrada)
+
