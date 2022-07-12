@@ -1,52 +1,35 @@
-import pandas as pd
+def __dados_fornecedor(self):
+    if self.__valida_numero_nota or self.__numero_nota == 0:
+        # armazenando todas as notas em aberto
+        notas = self.__notas_abertas()
+
+        # pegando todas as data colocando em um set em seguida salvando dentro da lista
+        datas = [data for data in set(dt[2] for dt in notas)]
+
+        # transformando as datas do tipo string em datas do tipo data
+        if datas:
+            for posicao, item in enumerate(datas):
+                ano = int(item[6:])
+                mes = int(item[3:5])
+                dia = int(item[0:2])
+                datas[posicao] = datetime.date(ano, mes, dia)
+
+        # pegando a ultima data e convertendo ela para string
+        ultima_data = str(max(datas))
+
+        # editando o formato da última data para fazer comparações com as datas das notas
+        data_formatada = f'{ultima_data[8:]}/{ultima_data[5:7]}/{ultima_data[0:4]}'
 
 
-class CriaNotaEntrada:
+        # inicializando dicionário da nota
+        nota = {'codigo': [], 'quantidade': [], 'descricao': [], 'custo': []}
 
-    def __init__(self, numero_nota=0, comissao=1):
-        from dados_sistema import DadosSistema
-        from dados_fornecedor import DadosFornecedor
-        from representa_despesa import DespesaSubgrupo
+        if num_nota:
+            for item in notas:
+                if int(item[0]) == num_nota:
+                    nota['codigo'].append(item[4])
+                    nota['quantidade'].append(float(item[15]) * float(item[18]))
+                    nota['descricao'].append(item[5])
+                    nota['custo'].append(float(item[19]))
 
-        self.__dados_sistema = DadosSistema().dados_sistema
-        self.__dados_fornecedor = DadosFornecedor(numero_nota=numero_nota).nota
-
-        if comissao > 0:
-            self.__comissao = comissao / 100
-        else:
-            self.__comissao = 0.01
-
-        self.__despesa_variavel = DespesaSubgrupo().despesa_variavel
-
-    @property
-    def nota_entrada(self):
-        return self.__calcula_preco_venda()
-
-    def __unifica_dados(self):
-        return dict(self.__dados_fornecedor, **self.__dados_sistema)
-
-    def __calcula_preco_venda(self):
-        calulos_venda = {'despesa_variavel': [], 'valor_desconto': [], 'comissao': [], 'valor_lucro': [], 'venda': []}
-        dados_unificados = self.__unifica_dados()
-
-        for indice in range(len(self.__unifica_dados()['codigo'])):
-            custo = dados_unificados['custo'][indice]
-            despesa_fixa = dados_unificados['despesa_fixa'][indice]
-            lucro = dados_unificados['lucro'][indice]
-            desconto = dados_unificados['desconto'][indice]
-
-            preco_venda = round(custo + despesa_fixa /
-                                (1 - (self.__comissao + self.__despesa_variavel + desconto + lucro)), 1)
-
-            calulos_venda['despesa_variavel'].append(round(preco_venda * self.__despesa_variavel, 2))
-            calulos_venda['valor_desconto'].append(round(preco_venda * desconto, 2))
-            calulos_venda['comissao'].append(round(preco_venda * self.__comissao, 2))
-            calulos_venda['valor_lucro'].append(round(preco_venda * lucro, 2))
-            calulos_venda['venda'].append(preco_venda)
-
-        return pd.DataFrame(dict(dados_unificados, **calulos_venda))
-
-
-if __name__ == '__main__':
-    nota_entrada = CriaNotaEntrada().nota_entrada
-    print(nota_entrada)
+            return nota

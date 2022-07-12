@@ -1,10 +1,12 @@
 import datetime
 
+
 class DadosFornecedor:
 
     def __init__(self, numero_nota=0):
         from conexao_banco import conecta_banco
-
+        from validador import exite_nota
+        self.__valida_numero_nota = exite_nota(numero=numero_nota)
         self.__banco = conecta_banco()
         self.__cursor = self.__banco.cursor()
         self.__numero_nota = numero_nota
@@ -48,63 +50,57 @@ order by F.codigo, I.nitem
         return self.__cursor.fetchall()
 
     def __dados_fornecedor(self):
-        # armazenando todas as notas em aberto
-        notas = self.__notas_abertas()
 
-        # pegando todos numeros das notas colocando em um set em seguida salvando dentro da lista já convertida para inteiro
-        numeros_notas = [(int(num[0]), num[1]) for num in set([(numero[0], numero[2]) for numero in notas])]
+        if type(self.__valida_numero_nota) is bool:
+            # armazenando todas as notas em aberto
+            notas = self.__notas_abertas()
 
-        # pegando todas as data colocando em um set em seguida salvando dentro da lista
-        datas = [data for data in set(dt[2] for dt in notas)]
+            # pegando todos numeros das notas colocando em um set em seguida salvando dentro da lista já convertida para inteiro
+            numeros_notas = [(int(num[0]), num[1]) for num in set([(numero[0], numero[2]) for numero in notas])]
 
-        # transformando as datas do tipo string em datas do tipo data
-        if datas:
-            for posicao, item in enumerate(datas):
-                ano = int(item[6:])
-                mes = int(item[3:5])
-                dia = int(item[0:2])
-                datas[posicao] = datetime.date(ano, mes, dia)
+            # pegando todas as data colocando em um set em seguida salvando dentro da lista
+            datas = [data[1] for data in numeros_notas]
 
-        # pegando a ultima data e convertendo ela para string
-        ultima_data = str(max(datas))
+            # transformando as datas do tipo string em datas do tipo data
+            if datas:
+                for posicao, item in enumerate(datas):
+                    ano = int(item[6:])
+                    mes = int(item[3:5])
+                    dia = int(item[0:2])
+                    datas[posicao] = datetime.date(ano, mes, dia)
 
-        # editando o formato da última data para fazer comparações com as datas das notas
-        data_formatada = f'{ultima_data[8:]}/{ultima_data[5:7]}/{ultima_data[0:4]}'
+            # pegando a ultima data e convertendo ela para string
+            ultima_data = str(max(datas))
 
-        # variavel de verificação de extistencia da nota no sistema, por padrão false
-        testa_numero_nota = False
+            # editando o formato da última data para fazer comparações com as datas das notas
+            data_formatada = f'{ultima_data[8:]}/{ultima_data[5:7]}/{ultima_data[0:4]}'
 
-        # inicializando variavel
-        num_nota = 0
+            # variavel de verificação de extistencia da nota no sistema, por padrão false
+            testa_numero_nota = False
 
-        # inicializando dicionário da nota
-        nota = {'codigo': [], 'quantidade': [], 'descricao': [], 'custo': []}
+            # inicializando variavel
+            num_nota = 0
 
-        # Avaliando a existencia do número informado, casa não informado vai ser usado o número da última nota
-        if self.__numero_nota:
-            for numeros in numeros_notas:
-                if self.__numero_nota in numeros:
-                    testa_numero_nota = True
+            # inicializando dicionário da nota
+            nota = {'codigo': [], 'quantidade': [], 'descricao': [], 'custo': []}
 
-            if testa_numero_nota:
-                num_nota = self.__numero_nota
+            if self.__numero_nota == 0:
+                for valor in numeros_notas:
+                    # verificando se a data é a última data, caso seja atribui o numero a nota
+                    if valor[1] == data_formatada:
+                        num_nota = valor[0]
             else:
-                print('Número da nota não encontrada')
-        else:
-            for valor in numeros_notas:
-                # verificando se a data é a última data, caso seja atribui o numero a nota
-                if valor[1] == data_formatada:
-                    num_nota = valor[0]
+                num_nota = self.__numero_nota
 
-        if num_nota:
-            for item in notas:
-                if int(item[0]) == num_nota:
-                    nota['codigo'].append(item[4])
-                    nota['quantidade'].append(float(item[15]) * float(item[18]))
-                    nota['descricao'].append(item[5])
-                    nota['custo'].append(float(item[19]))
+            if num_nota:
+                for item in notas:
+                    if int(item[0]) == num_nota:
+                        nota['codigo'].append(item[4])
+                        nota['quantidade'].append(float(item[15]) * float(item[18]))
+                        nota['descricao'].append(item[5])
+                        nota['custo'].append(float(item[19]))
 
-            return nota
+                return nota
 
 
 if __name__ == '__main__':

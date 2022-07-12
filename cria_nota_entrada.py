@@ -1,3 +1,4 @@
+# coding: UTF-8
 import pandas as pd
 
 
@@ -26,26 +27,30 @@ class CriaNotaEntrada:
         return dict(self.__dados_fornecedor, **self.__dados_sistema)
 
     def __calcula_preco_venda(self):
-        calulos_venda = {'despesa_variavel': [], 'valor_desconto': [], 'comissao': [], 'valor_lucro': [], 'venda': []}
-        dados_unificados = self.__unifica_dados()
 
-        for indice in range(len(self.__unifica_dados()['codigo'])):
-            custo = dados_unificados['custo'][indice]
-            despesa_fixa = dados_unificados['despesa_fixa'][indice]
-            lucro = dados_unificados['lucro'][indice]
-            desconto = dados_unificados['desconto'][indice]
-            valor_monetario = custo + despesa_fixa
+        if type(self.__dados_fornecedor) is dict and type(self.__dados_sistema) is dict:
+            calulos_venda = {'despesa_variavel': [], 'valor_desconto': [], 'comissao': [], 'valor_lucro': [], 'venda': []}
+            dados_unificados = self.__unifica_dados()
 
-            valor_percentual = 1 - (self.__comissao + self.__despesa_variavel + desconto + lucro)
-            preco_venda = round(valor_monetario / valor_percentual, 1)
+            for indice in range(len(self.__unifica_dados()['codigo'])):
+                custo = dados_unificados['custo'][indice]
+                despesa_fixa = dados_unificados['despesa_fixa'][indice]
+                lucro = dados_unificados['lucro'][indice]
+                desconto = dados_unificados['desconto'][indice]
 
-            calulos_venda['despesa_variavel'].append(round(preco_venda * self.__despesa_variavel, 2))
-            calulos_venda['valor_desconto'].append(round(preco_venda * desconto, 2))
-            calulos_venda['comissao'].append(round(preco_venda * self.__comissao, 2))
-            calulos_venda['valor_lucro'].append(round(preco_venda * lucro, 2))
-            calulos_venda['venda'].append(preco_venda)
+                valor_monetario = custo + despesa_fixa
+                valor_percentual = 1 - (self.__comissao + self.__despesa_variavel + desconto + lucro)
+                preco_venda = round(valor_monetario / valor_percentual, 1)
 
-        return pd.DataFrame(dict(dados_unificados, **calulos_venda))
+                calulos_venda['despesa_variavel'].append(round(preco_venda * self.__despesa_variavel, 2))
+                calulos_venda['valor_desconto'].append(round(preco_venda * desconto, 2))
+                calulos_venda['comissao'].append(round(preco_venda * self.__comissao, 2))
+                calulos_venda['valor_lucro'].append(round(preco_venda * lucro, 2))
+                calulos_venda['venda'].append(preco_venda)
+
+            return pd.DataFrame(dict(dados_unificados, **calulos_venda))
+
+        return 'Nota não localizada ou finalizada'
 
 
 if __name__ == '__main__':
