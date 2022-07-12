@@ -24,11 +24,11 @@ class CriaNotaEntrada:
         return self.__calcula_preco_venda()
 
     def __unifica_dados(self):
-        return dict(self.__dados_fornecedor, **self.__dados_sistema)
+        return dict(self.__dados_fornecedor[0], **self.__dados_sistema)
 
     def __calcula_preco_venda(self):
 
-        if type(self.__dados_fornecedor) is dict and type(self.__dados_sistema) is dict:
+        if type(self.__dados_fornecedor[0]) is dict and type(self.__dados_sistema) is dict:
             calulos_venda = {'despesa_variavel': [], 'valor_desconto': [], 'comissao': [], 'valor_lucro': [], 'venda': []}
             dados_unificados = self.__unifica_dados()
 
@@ -48,12 +48,12 @@ class CriaNotaEntrada:
                 calulos_venda['valor_lucro'].append(round(preco_venda * lucro, 2))
                 calulos_venda['venda'].append(preco_venda)
 
-            return pd.DataFrame(dict(dados_unificados, **calulos_venda))
+            return pd.DataFrame(dict(dados_unificados, **calulos_venda)).to_excel(excel_writer=f'{self.__dados_fornecedor[1]} {self.__dados_fornecedor[2]}.xlsx')
 
         return 'Nota não localizada ou finalizada'
 
 
 if __name__ == '__main__':
     nota_entrada = CriaNotaEntrada().nota_entrada
-    print(nota_entrada)
+
 

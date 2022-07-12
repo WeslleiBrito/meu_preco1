@@ -15,6 +15,10 @@ class DadosFornecedor:
     def nota(self):
         return self.__dados_fornecedor()
 
+    @property
+    def todas_as_notas(self):
+        return self.__notas_abertas()
+
     def __notas_abertas(self):
         self.__cursor.execute("""select 
 N.numero Num_NF, 
@@ -92,6 +96,7 @@ order by F.codigo, I.nitem
             else:
                 num_nota = self.__numero_nota
 
+            fornecedor = ''
             if num_nota:
                 for item in notas:
                     if int(item[0]) == num_nota:
@@ -99,8 +104,9 @@ order by F.codigo, I.nitem
                         nota['quantidade'].append(float(item[15]) * float(item[18]))
                         nota['descricao'].append(item[5])
                         nota['custo'].append(float(item[19]))
+                        fornecedor = item[1]
 
-                return nota
+                return nota, fornecedor, num_nota
 
 
 if __name__ == '__main__':

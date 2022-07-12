@@ -21,8 +21,8 @@ class DadosSistema:
         return self.__busca_dados_sistema()
 
     def __busca_dados_sistema(self):
-        if type(self.__nota_fornecedor) is dict:
-            codigo_nota = self.__nota_fornecedor['codigo']
+        if type(self.__nota_fornecedor[0]) is dict:
+            codigo_nota = self.__nota_fornecedor[0]['codigo']
             despesas_fixas_lucro_desconto = {'despesa_fixa': [], 'lucro': [], 'desconto': []}
             self.__cursor.execute('SELECT prod_cod, prod_dsubgrupo FROM produto')
             dados_produtos_banco = self.__cursor.fetchall()
@@ -43,5 +43,5 @@ class DadosSistema:
 
 
 if __name__ == '__main__':
-    dados = DadosSistema(numero_nota='m').dados_sistema
+    dados = DadosSistema().dados_sistema
     print(dados)
