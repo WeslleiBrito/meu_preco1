@@ -104,7 +104,10 @@ order by F.codigo, I.nitem
                         nota['quantidade'].append(float(item[15]) * float(item[18]))
                         nota['descricao'].append(item[5])
                         nota['custo'].append(float(item[19]))
-                        fornecedor = item[1]
+                        if len(item[1]) > 15:
+                            fornecedor = item[1][0:16]
+                        else:
+                            fornecedor = item[1]
 
                 return nota, fornecedor, num_nota
 
