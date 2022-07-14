@@ -4,12 +4,12 @@ import pandas as pd
 
 class CriaNotaEntrada:
 
-    def __init__(self, numero_nota=0, comissao=1):
+    def __init__(self, numero_nota=0, comissao=1, limite_desconto_lucro=0.3):
         from dados_sistema import DadosSistema
         from dados_fornecedor import DadosFornecedor
         from representa_despesa import DespesaSubgrupo
 
-        self.__dados_sistema = DadosSistema(numero_nota=numero_nota).dados_sistema
+        self.__dados_sistema = DadosSistema(numero_nota=numero_nota, limite_desconto_lucro=limite_desconto_lucro).dados_sistema
         self.__dados_fornecedor = DadosFornecedor(numero_nota=numero_nota).nota
 
         if comissao > 0:
@@ -48,12 +48,12 @@ class CriaNotaEntrada:
                 calulos_venda['valor_lucro'].append(round(preco_venda * lucro, 2))
                 calulos_venda['venda'].append(preco_venda)
 
-            return pd.DataFrame(dict(dados_unificados, **calulos_venda)).to_excel(excel_writer=f'{self.__dados_fornecedor[1]} {self.__dados_fornecedor[2]}.xlsx')
-
+            return pd.DataFrame(dict(dados_unificados, **calulos_venda))
         return 'Nota não localizada ou finalizada'
 
 
 if __name__ == '__main__':
-    nota_entrada = CriaNotaEntrada().nota_entrada
+    nota_entrada = CriaNotaEntrada(limite_desconto_lucro=50).nota_entrada
+    print(nota_entrada.to_excel('nota.xlsx', sheet_name='Nota de entrda'))
 
 

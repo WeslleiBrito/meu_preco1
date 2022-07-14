@@ -3,10 +3,14 @@
 from conexao_banco import conecta_banco
 from datetime import date
 
+
 class Despesas:
-    def __init__(self):
+    def __init__(self, data_inicial='', data_final=''):
         self.__banco = conecta_banco()
         self.__cursor = self.__banco.cursor()
+
+        self.__data_inicial = data_inicial
+        self.__data_final = data_final
 
     @property
     def variavel(self):
@@ -15,8 +19,6 @@ class Despesas:
     @property
     def fixa(self):
         return self.__calcula_despesas()[0]
-
-
 
     def __tipo_despesas(self):
         self.__cursor.execute('SELECT tipocont_cod, tipocont_despesa, conta_fixa FROM tipoconta')
@@ -34,14 +36,25 @@ class Despesas:
             'SELECT rateio_tipoconta, DATE_FORMAT(rateio_dt_pagamento,"%d%/%m%/%Y"), rateio_vlrparcela FROM pagar_rateio')
 
         geral = self.__cursor.fetchall()
+
+        if self.__data_final and self.__data_inicial:
+            self.__data_inicial = date(day=int(self.__data_inicial[0:2]), month=int(self.__data_inicial[3:5]),
+                                       year=int(self.__data_inicial[6:]))
+            self.__data_final = date(day=int(self.__data_final[0:2]), month=int(self.__data_final[3:5]),
+                                     year=int(self.__data_final[6:]))
+
         for item in geral:
 
             data_tabela = item[1]
             if data_tabela:
                 data = date(day=int(data_tabela[0:2]), month=int(data_tabela[3:5]), year=int(data_tabela[6:]))
 
-                if data <= date.today():
-                    vigentes.append(item)
+                if self.__data_inicial and self.__data_final:
+                    if self.__data_inicial <= data <= self.__data_final:
+                        vigentes.append(item)
+                else:
+                    if data <= date.today():
+                        vigentes.append(item)
 
         tipo_fixa = self.__tipo_despesas()[0]
         tipo_variavel = self.__tipo_despesas()[1]
@@ -58,5 +71,5 @@ class Despesas:
 
 
 if __name__ == '__main__':
-    tipos = Despesas()
+    tipos = Despesas(data_inicial='01/04/2022', data_final='30/06/2022')
     print(tipos.variavel)

@@ -1,5 +1,5 @@
 class DadosSistema:
-    def __init__(self, numero_nota=0):
+    def __init__(self, numero_nota=0, limite_desconto_lucro=0.3):
         from dados_fornecedor import DadosFornecedor
         from conexao_banco import conecta_banco
         from representa_despesa import DespesaSubgrupo
@@ -15,6 +15,7 @@ class DadosSistema:
         self.__despesas_fixas = DespesaSubgrupo().despesa_fixa_subgrupo
         self.__lucros_subgrupos = LucroSubgrupo().lucro_por_subgrupo
         self.__descontos_subgrupos = DescontoPorSubgrupo().desconto_subgrupo
+        self.__limite_desconto_lucro = limite_desconto_lucro
 
     @property
     def dados_sistema(self):
@@ -36,6 +37,9 @@ class DadosSistema:
                     (self.__lucros_subgrupos[subgrupos[codigo_banco.index(codigo)]])
                 despesas_fixas_lucro_desconto['desconto'].append \
                     (self.__descontos_subgrupos[subgrupos[codigo_banco.index(codigo)]])
+
+                if (despesas_fixas_lucro_desconto['lucro'][-1] + despesas_fixas_lucro_desconto['desconto'][-1]) > self.__limite_desconto_lucro:
+                    despesas_fixas_lucro_desconto['lucro'][-1] = self.__limite_desconto_lucro - despesas_fixas_lucro_desconto['desconto'][-1]
 
             return despesas_fixas_lucro_desconto
 
