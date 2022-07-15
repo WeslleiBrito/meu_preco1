@@ -105,9 +105,13 @@ order by F.codigo, I.nitem
                         nota['descricao'].append(item[5])
                         nota['custo'].append(float(item[19]))
                         if len(item[1]) > 15:
-                            fornecedor = item[1][0:16]
+                            fornecedor = str(item[1][0:16])
                         else:
-                            fornecedor = item[1]
+                            fornecedor = str(item[1])
+
+                        for caract in fornecedor:
+                            if not caract.isalpha():
+                                fornecedor = fornecedor.replace(f'{caract}', ' ')
 
                 return nota, fornecedor, num_nota
 
