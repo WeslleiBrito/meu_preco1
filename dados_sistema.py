@@ -40,6 +40,9 @@ class DadosSistema:
 
                 if (despesas_fixas_lucro_desconto['lucro'][-1] + despesas_fixas_lucro_desconto['desconto'][-1]) > self.__limite_desconto_lucro:
                     despesas_fixas_lucro_desconto['lucro'][-1] = self.__limite_desconto_lucro - despesas_fixas_lucro_desconto['desconto'][-1]
+                elif despesas_fixas_lucro_desconto['desconto'][-1] > self.__limite_desconto_lucro:
+                    despesas_fixas_lucro_desconto['lucro'][-1] = 0.0
+                    despesas_fixas_lucro_desconto['desconto'][-1] = self.__limite_desconto_lucro
 
             return despesas_fixas_lucro_desconto
 
