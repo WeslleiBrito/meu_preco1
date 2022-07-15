@@ -48,14 +48,13 @@ class CriaNotaEntrada:
                 calulos_venda['valor_lucro'].append(round(preco_venda * lucro, 2))
                 calulos_venda['venda'].append(preco_venda)
 
-            print(self.__dados_fornecedor[1])
             return pd.DataFrame(dict(dados_unificados, **calulos_venda)).to_excel(f"{self.__dados_fornecedor[1]} {self.__dados_fornecedor[2]}.xlsx", sheet_name='Compra')
 
         return 'Nota não localizada ou finalizada'
 
 
 if __name__ == '__main__':
-    nota_entrada = CriaNotaEntrada().nota_entrada
+    nota_entrada = CriaNotaEntrada(numero_nota=45651).nota_entrada
     print('Nota criada com sucesso!')
 
 
