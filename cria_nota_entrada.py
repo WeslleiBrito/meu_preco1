@@ -54,7 +54,7 @@ class CriaNotaEntrada:
 
 
 if __name__ == '__main__':
-    nota_entrada = CriaNotaEntrada(numero_nota=45651).nota_entrada
+    nota_entrada = CriaNotaEntrada().nota_entrada
     print('Nota criada com sucesso!')
 
 
