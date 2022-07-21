@@ -1,6 +1,6 @@
 from datetime import date
 from conexao_banco import conecta_banco
-from rateio_despesa_fixa import DespesasRateio
+from rateio_despesa import DespesasRateio
 
 
 class Lucratividade:
@@ -69,7 +69,7 @@ class Lucratividade:
 
         for indice, item in enumerate(self.__dados_vendas()):
             posicao = codigo.index(item['codigo'])
-            fixa = item['quantidade'] * despesa_fixa[subgrupo[posicao]]
+            fixa = round(item['quantidade'] * despesa_fixa[subgrupo[posicao]], 2)
             variavel = round(item['faturamento'] * despesa_variavel, 2)
             comissao = round(item['faturamento'] * self.__comissao, 2)
 
@@ -84,4 +84,8 @@ class Lucratividade:
 
 
 if __name__ == '__main__':
-    print(Lucratividade(comissao=1).dados_vendas)
+    lucros = Lucratividade(comissao=1, data_inicial=date(2022, 7, 20)).dados_vendas
+
+    for lucro in lucros:
+        print(lucro)
+
