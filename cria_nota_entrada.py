@@ -1,6 +1,7 @@
 # coding: UTF-8
 import pandas as pd
 import os
+from pathlib import Path
 from colorama import Fore
 
 
@@ -13,10 +14,14 @@ class CriaNotaEntrada:
 
         if caminho:
             if not os.path.exists(caminho):
-                os.makedirs(caminho)
-                print(Fore.BLUE + 'Caminho do arquivo gerado automaticamente!' + Fore.RESET)
-
-            self.__caminho = caminho + '/'
+                try:
+                    os.makedirs(caminho)
+                    print(Fore.BLUE + 'Caminho do arquivo gerado automaticamente!' + Fore.RESET)
+                    self.__caminho = caminho + '/'
+                except PermissionError as err:
+                    print(Fore.RED + f'Não foi permitodo a criação do arquivo: Erro {err}. {Fore.RESET}{Fore.BLUE}\nO documento será salvo no caminho: {os.getcwd()}\\Notas de Entrada' + Fore.RESET)
+                    os.makedirs(os.getcwd() + '/Notas de Entrada', exist_ok=True)
+                    self.__caminho = f'{os.getcwd()}/Notas de Entrada/'
         else:
             self.__caminho = caminho
 
@@ -60,14 +65,9 @@ class CriaNotaEntrada:
                 calulos_venda['comissao'].append(round(preco_venda * self.__comissao, 2))
                 calulos_venda['valor_lucro'].append(round(preco_venda * lucro, 2))
                 calulos_venda['venda'].append(preco_venda)
-            try:
-                return pd.DataFrame(dict(dados_unificados, **calulos_venda)).to_excel(
-                    f"{self.__caminho}{self.__dados_fornecedor[1]} {self.__dados_fornecedor[2]}.xlsx",
-                    sheet_name='Compra')
-            except FileNotFoundError:
-                return pd.DataFrame(dict(dados_unificados, **calulos_venda)).to_excel(
-                    f"C:/Cria nota entrada/{self.__dados_fornecedor[1]} {self.__dados_fornecedor[2]}.xlsx",
-                    sheet_name='Compra')
+
+            return pd.DataFrame(dict(dados_unificados, **calulos_venda)).to_excel(
+                f"{self.__caminho}{self.__dados_fornecedor[1]} {self.__dados_fornecedor[2]}.xlsx", sheet_name='Compra')
 
         return Fore.RED + 'Nota não localizada ou finalizada' + Fore.RESET
 
