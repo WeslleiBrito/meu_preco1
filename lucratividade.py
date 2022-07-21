@@ -1,3 +1,4 @@
+# coding: UTF-8
 from datetime import date
 from conexao_banco import conecta_banco
 from rateio_despesa import DespesasRateio
@@ -77,7 +78,14 @@ class Lucratividade:
             dados_vendas[indice]['despesa_variavel'] = variavel
             dados_vendas[indice]['despesa_fixa'] = fixa
             dados_vendas[indice]['custo_total'] = round(dados_vendas[indice]['custo'] + comissao + variavel + fixa, 2)
-            dados_vendas[indice]['lucro'] = round(dados_vendas[indice]['faturamento'] - dados_vendas[indice]['custo_total'], 2)
+
+            if dados_vendas[indice]['faturamento'] - dados_vendas[indice]['custo_total'] > 0:
+                dados_vendas[indice]['lucro'] = round(dados_vendas[indice]['faturamento'] - dados_vendas[indice]['custo_total'], 2)
+            else:
+                dados_vendas[indice]['comissao'] = 0.0
+                dados_vendas[indice]['custo_total'] = round(dados_vendas[indice]['custo'] + comissao + variavel + fixa, 2)
+                dados_vendas[indice]['lucro'] = round(dados_vendas[indice]['faturamento'] - dados_vendas[indice]['custo_total'], 2)
+
             dados_vendas[indice]['porcentagem_lucro'] = round(dados_vendas[indice]['lucro'] / dados_vendas[indice]['faturamento'], 2)
 
         return dados_vendas
@@ -86,6 +94,20 @@ class Lucratividade:
 if __name__ == '__main__':
     lucros = Lucratividade(comissao=1, data_inicial=date(2022, 7, 20)).dados_vendas
 
-    for lucro in lucros:
-        print(lucro)
+    print(lucros)
+    custo = 0.0
+    faturamento = 0.0
+    despesa_vr = 0.0
+    comissao = 0.0
+    fixa = 0.0
 
+    for item in lucros:
+        custo += item['custo']
+        faturamento += item['faturamento']
+        despesa_vr += item['despesa_variavel']
+        comissao += item['comissao']
+        fixa += item['despesa_fixa']
+    custo_total = round(custo + despesa_vr + comissao + fixa, 2)
+    lucro = round(faturamento - custo_total, 2)
+
+    print(f'\nFaturamento: {round(faturamento, 2)}\nCusto: {round(custo, 2)}\nDespesa Variavel: {round(despesa_vr, 2)}\nComissão: {round(comissao, 2)}\nDespesa Fixa: {round(fixa, 2)}\nCusto total: {custo_total}\nLucro/Prejuízo: {lucro}')
