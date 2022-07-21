@@ -3,6 +3,12 @@ from datetime import date
 from conexao_banco import conecta_banco
 from rateio_despesa import DespesasRateio
 
+def espaco_nomes(descricao, valor, limite=25):
+
+    valor = len(str(valor))
+    descricao = len(str(descricao))
+
+    return limite - (valor + descricao)
 
 class Lucratividade:
 
@@ -92,9 +98,8 @@ class Lucratividade:
 
 
 if __name__ == '__main__':
-    lucros = Lucratividade(comissao=1, data_inicial=date(2022, 7, 20)).dados_vendas
+    lucros = Lucratividade(comissao=1).dados_vendas
 
-    print(lucros)
     custo = 0.0
     faturamento = 0.0
     despesa_vr = 0.0
@@ -107,7 +112,14 @@ if __name__ == '__main__':
         despesa_vr += item['despesa_variavel']
         comissao += item['comissao']
         fixa += item['despesa_fixa']
+        print(item)
     custo_total = round(custo + despesa_vr + comissao + fixa, 2)
     lucro = round(faturamento - custo_total, 2)
 
-    print(f'\nFaturamento: {round(faturamento, 2)}\nCusto: {round(custo, 2)}\nDespesa Variavel: {round(despesa_vr, 2)}\nComissão: {round(comissao, 2)}\nDespesa Fixa: {round(fixa, 2)}\nCusto total: {custo_total}\nLucro/Prejuízo: {lucro}')
+    nome = ['Faturamento', 'Custo', 'Despesa Variavel', 'Comissão', 'Despesa Fixa', 'Custo total', 'Lucro/Prejuízo']
+    valores = [round(faturamento, 2), round(custo, 2), round(despesa_vr, 2), round(comissao, 2), round(fixa, 2), round(custo_total, 2), round(lucro, 2)]
+
+    print()
+    for n, v in zip(nome, valores):
+        print(f'{n} {espaco_nomes(n, v) * "-"} {v}')
+
