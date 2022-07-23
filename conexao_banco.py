@@ -3,10 +3,12 @@
 
 import mysql.connector
 import mysql.connector.errors
+from busca_ip_servidor import busca_ip
 
 
-def conecta_banco():
-    config = {'host': '192.168.15.13',
+def conecta_banco(nome_host='ServidorBalcao'):
+
+    config = {'host': f'{busca_ip(nome_host)}',
               'database': 'clarionerp',
               'user': 'burite',
               'password': 'burite123',

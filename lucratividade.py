@@ -105,6 +105,7 @@ if __name__ == '__main__':
     despesa_vr = 0.0
     comissao = 0.0
     fixa = 0.0
+    negativos = 0.0
 
     for item in lucros:
         custo += item['custo']
@@ -112,12 +113,15 @@ if __name__ == '__main__':
         despesa_vr += item['despesa_variavel']
         comissao += item['comissao']
         fixa += item['despesa_fixa']
+        if item['lucro'] < 0:
+            negativos += item['lucro']
+
         print(item)
     custo_total = round(custo + despesa_vr + comissao + fixa, 2)
     lucro = round(faturamento - custo_total, 2)
 
-    nome = ['Faturamento', 'Custo', 'Despesa Variavel', 'Comissão', 'Despesa Fixa', 'Custo total', 'Lucro/Prejuízo']
-    valores = [round(faturamento, 2), round(custo, 2), round(despesa_vr, 2), round(comissao, 2), round(fixa, 2), round(custo_total, 2), round(lucro, 2)]
+    nome = ['Faturamento', 'Custo', 'Despesa Variavel', 'Comissão', 'Despesa Fixa', 'Custo total', 'Lucro/Prejuízo', 'Prejuízos']
+    valores = [round(faturamento, 2), round(custo, 2), round(despesa_vr, 2), round(comissao, 2), round(fixa, 2), round(custo_total, 2), round(lucro, 2), round(negativos, 2)]
 
     print()
     for n, v in zip(nome, valores):

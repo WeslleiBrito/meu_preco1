@@ -37,7 +37,4 @@ class DespesasRateio:
 
 
 if __name__ == '__main__':
-    print(DespesasRateio().despesa_variavel)
-
-    # for item in valores.items():
-    #     print(item)
+    print(DespesasRateio().despesa_fixa)

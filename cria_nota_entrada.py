@@ -21,6 +21,8 @@ class CriaNotaEntrada:
                     print(Fore.RED + f'Não foi permitodo a criação do arquivo: Erro {err}. {Fore.RESET}{Fore.BLUE}\nO documento será salvo no caminho: {os.getcwd()}\\Notas de Entrada' + Fore.RESET)
                     os.makedirs(os.getcwd() + '/Notas de Entrada', exist_ok=True)
                     self.__caminho = f'{os.getcwd()}/Notas de Entrada/'
+            else:
+                self.__caminho = caminho + '/'
         else:
             self.__caminho = caminho
 
