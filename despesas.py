@@ -2,15 +2,28 @@
 
 from conexao_banco import conecta_banco
 from datetime import date
+from valores_padroes import data_inicial_padrao
 
 
 class Despesas:
-    def __init__(self, data_inicial='', data_final=''):
+    def __init__(self, data_inicial=str(data_inicial_padrao()), data_final=str(date.today())):
         self.__banco = conecta_banco()
         self.__cursor = self.__banco.cursor()
 
-        self.__data_inicial = data_inicial
-        self.__data_final = data_final
+        try:
+            ano = int(data_inicial[0:4])
+            mes = int(data_inicial[5:7])
+            dia = int(data_inicial[8:])
+            self.__data_inicial = date(ano, mes, dia)
+
+            ano = int(data_final[0:4])
+            mes = int(data_final[5:7])
+            dia = int(data_final[8:])
+            self.__data_final = date(ano, mes, dia)
+
+        except(ValueError, TypeError):
+            print('Data inválida')
+            raise Exception
 
     @property
     def variavel(self):
@@ -31,37 +44,17 @@ class Despesas:
         return tipo_fixa, tipo_variavel
 
     def __calcula_despesas(self):
-        vigentes = []
         self.__cursor.execute(
-            'SELECT rateio_tipoconta, DATE_FORMAT(rateio_dt_pagamento,"%d%/%m%/%Y"), rateio_vlrparcela FROM pagar_rateio')
+            f'SELECT rateio_tipoconta, DATE_FORMAT(rateio_dtvencimento,"%d%/%m%/%Y") as Vencimento, rateio_vlrparcela FROM pagar_rateio WHERE rateio_dtvencimento BETWEEN "{self.__data_inicial}" AND "{self.__data_final}";')
 
-        geral = self.__cursor.fetchall()
-
-        if self.__data_final and self.__data_inicial:
-            self.__data_inicial = date(day=int(self.__data_inicial[0:2]), month=int(self.__data_inicial[3:5]),
-                                       year=int(self.__data_inicial[6:]))
-            self.__data_final = date(day=int(self.__data_final[0:2]), month=int(self.__data_final[3:5]),
-                                     year=int(self.__data_final[6:]))
-
-        for item in geral:
-
-            data_tabela = item[1]
-            if data_tabela:
-                data = date(day=int(data_tabela[0:2]), month=int(data_tabela[3:5]), year=int(data_tabela[6:]))
-
-                if self.__data_inicial and self.__data_final:
-                    if self.__data_inicial <= data <= self.__data_final:
-                        vigentes.append(item)
-                else:
-                    if data <= date.today():
-                        vigentes.append(item)
+        geral = [item for item in self.__cursor.fetchall()]
 
         tipo_fixa = self.__tipo_despesas()[0]
         tipo_variavel = self.__tipo_despesas()[1]
         valor_despesa_fixa = 0
         valor_despesa_variavel = 0
 
-        for item in vigentes:
+        for item in geral:
             if item[0] in tipo_fixa:
                 valor_despesa_fixa += item[2]
             elif item[0] in tipo_variavel:
@@ -71,5 +64,6 @@ class Despesas:
 
 
 if __name__ == '__main__':
-    tipos = Despesas(data_inicial='01/04/2022', data_final='30/06/2022')
-    print(tipos.variavel)
+    tipos = Despesas(data_inicial='2022-07-01', data_final='2022-07-31')
+    print('Variavel:', tipos.variavel)
+    print('Fixa:', tipos.fixa)

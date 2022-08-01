@@ -1,4 +1,5 @@
 # coding: UTF-8
+from datetime import date, datetime
 from conexao_banco import conecta_banco
 
 
@@ -25,3 +26,32 @@ def exite_nota(numero=0):
     else:
         return 'Número não localizado ou nota já efetivada.'
 
+
+def ultimo_dia(mes=datetime.now().month - 1, ano=datetime.now().year):
+    """
+    :param mes: Por padrão o mês ele é sempre um mês anterior ao atul
+    :param ano: Por padrão ele sempre será o ano atual
+    :return: retorna a última data do mês
+    """
+
+    for dia in range(31, -1, -1):
+
+        try:
+            return date(ano, mes, dia)
+        except ValueError:
+            continue
+
+
+def valida_data(data):
+    """
+    :param data: Formato aceito ##/##/## ou ##/##/####
+    :return: Caso seja uma data válida retorna a data já no padrão python, do contrario retorna false
+    """
+    try:
+        return date(int(data[6:]), int(data[3:5]), int(data[0:2]))
+    except (ValueError, TypeError):
+        return False
+
+
+if __name__ == '__main__':
+    print(valida_data('01/12/20'))

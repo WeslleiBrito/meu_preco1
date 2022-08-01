@@ -19,7 +19,7 @@ class DespesasRateio:
     def __calculo_despesa_variavel(self):
         faturamento_total = sum([venda['faturamento'] for venda in self.__faturamento.values()])
 
-        return round(self.__despesa_variavel / faturamento_total, 1)
+        return round(self.__despesa_variavel / faturamento_total, 2)
 
     def __calcula_despesa_fixa(self):
         despesa_subgrupo = dict()
