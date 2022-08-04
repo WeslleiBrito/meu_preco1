@@ -5,8 +5,16 @@ from workadays import workdays
 
 def feriados(country, state, data_inicial, data_final):
     dias = 0
+    d = 0
     for date in workdays.get_holidays(country=country, state=state, years=range(data_inicial, data_final)):
-        dias += 1
+        date = str(date)
+        ano = int(date[0:4])
+        mes = int(date[5:7])
+        dia = int(date[8:])
+        indice_semana = dt.date(year=ano, month=mes, day=dia).weekday()
+        d += 1
+        if -1 < indice_semana < 5:
+            dias += 1
 
     return dias
 

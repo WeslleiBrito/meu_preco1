@@ -14,7 +14,12 @@ def espaco_nomes(descricao, valor, limite=25):
 class Lucratividade:
 
     def __init__(self, data_inicial=date.today(), data_final=date.today(), comissao=0.0):
+        """
 
+        :param data_inicial: Por padrão a data é sempre do dia atual
+        :param data_final: Por padrão é sempre a data atual
+        :param comissao: Comissão é sempre zero por padrão
+        """
         self.__banco = conecta_banco()
         self.__cursor = self.__banco.cursor()
         self.__data_inicial = data_inicial
@@ -26,22 +31,14 @@ class Lucratividade:
             self.__comissao = round(comissao / 100, 2)
 
     @property
-    def datas(self):
-        return f'Data Inicial: {self.__data_inicial} - Data Final: {self.__data_final}'
-
-    @property
     def dados_vendas(self):
         return self.__venda_completo()
 
-    @property
-    def codigo_subgrupo(self):
-        return self.__codigo_subgrupo()
-
-    @property
-    def vendedores(self):
-        return self.__vendedores()
-
     def __vendedores(self):
+
+        """
+        :return: retorna duas lista uma com o código do vendedor e outra com o nome
+        """
         self.__cursor.execute('SELECT fun_cod,  fun_nome FROM funcionario;')
         dados = self.__cursor.fetchall()
         codigo_vendedor = [codigo[0] for codigo in dados]

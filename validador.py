@@ -27,7 +27,7 @@ def exite_nota(numero=0):
         return 'Número não localizado ou nota já efetivada.'
 
 
-def ultimo_dia(mes=datetime.now().month - 1, ano=datetime.now().year):
+def ultimo_dia_do_mes(mes=datetime.now().month, ano=datetime.now().year):
     """
     :param mes: Por padrão o mês ele é sempre um mês anterior ao atul
     :param ano: Por padrão ele sempre será o ano atual
@@ -42,16 +42,16 @@ def ultimo_dia(mes=datetime.now().month - 1, ano=datetime.now().year):
             continue
 
 
-def valida_data(data):
+def valida_data(data: str):
     """
     :param data: Formato aceito ##/##/## ou ##/##/####
     :return: Caso seja uma data válida retorna a data já no padrão python, do contrario retorna false
     """
     try:
-        return date(int(data[6:]), int(data[3:5]), int(data[0:2]))
+        return date.fromisoformat(data)
     except (ValueError, TypeError):
-        return False
+        raise 'Data inválida'
 
 
 if __name__ == '__main__':
-    print(valida_data('01/12/20'))
+    print(ultimo_dia_do_mes())

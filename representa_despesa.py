@@ -1,3 +1,4 @@
+# coding: UTF-8
 from faturamento_subgrupos import FaturamentoSubgrupo
 from despesas import Despesas
 
@@ -35,4 +36,4 @@ class DespesaSubgrupo:
 
 
 if __name__ == '__main__':
-    print(DespesaSubgrupo().despesa_fixa_subgrupo)
+    print(DespesaSubgrupo().despesa_fixa_subgrupo['PREGO C/ CABEÇA'])

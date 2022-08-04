@@ -1,22 +1,36 @@
+# coding: UTF-8
 from conexao_banco import conecta_banco
+from valores_padroes import data_inicial_padrao
+from datetime import date
 
 
 class FaturamentoSubgrupo:
-    def __init__(self):
+    def __init__(self, data_inicial=data_inicial_padrao(), data_final=date.today()):
         self.__banco = conecta_banco()
         self.__cursor = self.__banco.cursor()
+        self.__data_inicial = data_inicial
+        self.__data_final = data_final
 
     @property
     def faturamento_por_subgrupo(self):
         return self.__faturamento_subgrupo()
 
     @property
+    def datas(self):
+        return self.__data_inicial, self.__data_final
+
+    @property
     def faturamento_total(self):
         return self.__faturamento_total()
 
+    @property
+    def custo_total(self):
+        return self.__custo_total()
+
     def __soma_produtos(self):
+
         self.__cursor.execute(
-            "SELECT produto, SUM(qtd - qtd_devolvida), SUM(vrcusto_composicao * (qtd - qtd_devolvida)), SUM(desconto), SUM(total), SUM(qtd_devolvida)  FROM venda_item GROUP BY descricao ORDER BY total DESC;")
+            f'SELECT produto, SUM(qtd - qtd_devolvida), SUM(vrcusto_composicao * (qtd - qtd_devolvida)), SUM(desconto), SUM(total), SUM(qtd_devolvida)  FROM venda_item WHERE dtvenda BETWEEN "{self.__data_inicial}" AND "{self.__data_final}" GROUP BY descricao ORDER BY total DESC;')
 
         valores = self.__cursor.fetchall()
 
@@ -52,9 +66,13 @@ class FaturamentoSubgrupo:
 
     def __faturamento_total(self):
         geral = self.__faturamento_subgrupo()
-        return sum([geral[item]['faturamento'] for item in geral])
+        return round(sum([geral[item]['faturamento'] for item in geral]), 2)
+
+    def __custo_total(self):
+        geral = self.__faturamento_subgrupo()
+        return round(sum([geral[item]['custo'] for item in geral], 2))
 
 
 if __name__ == '__main__':
-    fatura = FaturamentoSubgrupo()
-    print(fatura.faturamento_por_subgrupo)
+    fatura = FaturamentoSubgrupo(data_inicial='2022-07-01', data_final='2022-07-31')
+    print(fatura.custo_total)

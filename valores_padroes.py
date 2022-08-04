@@ -4,7 +4,7 @@ def data_inicial_padrao(servidor='ServidorBalcao'):
     cursor = banco.cursor()
     cursor.execute('SELECT rateio_dtvencimento FROM pagar_rateio')
     data = cursor.fetchall()[0][0]
-    return data
+    return str(data)
 
 
 if __name__ == '__main__':
