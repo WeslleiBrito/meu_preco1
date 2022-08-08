@@ -75,4 +75,4 @@ class CriaNotaEntrada:
 
 if __name__ == '__main__':
     nota_entrada = CriaNotaEntrada(caminho=r'C:/Users/9010/Desktop/Criação de preços').nota_entrada
-    print('Nota criada com sucesso!')
+    print(Fore.GREEN + 'Nota criada com sucesso!' + Fore.RESET)
