@@ -41,6 +41,10 @@ class CriaNotaEntrada:
     def nota_entrada(self):
         return self.__calcula_preco_venda()
 
+    @property
+    def caminho(self):
+        return self.__caminho
+
     def __unifica_dados(self):
         return dict(self.__dados_fornecedor[0], **self.__dados_sistema)
 
@@ -74,5 +78,6 @@ class CriaNotaEntrada:
 
 
 if __name__ == '__main__':
-    nota_entrada = CriaNotaEntrada(caminho=r'C:/Users/9010/Desktop/Criação de preços').nota_entrada
-    print(Fore.GREEN + 'Nota criada com sucesso!' + Fore.RESET)
+    nota_entrada = CriaNotaEntrada(caminho=r'C:/Users/9010/Desktop/Criação de preços')
+    nota = nota_entrada.nota_entrada
+    print(Fore.GREEN + 'Nota criada com sucesso em:' + Fore.RESET, nota_entrada.caminho)

@@ -48,7 +48,7 @@ def valida_data(data: str):
     :return: Caso seja uma data válida retorna a data já no padrão python, do contrario retorna false
     """
     try:
-        return date.fromisoformat(data)
+        return date.fromisoformat(str(data))
     except (ValueError, TypeError):
         raise 'Data inválida'
 

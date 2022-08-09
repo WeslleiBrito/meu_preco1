@@ -4,7 +4,7 @@ class DataFrameLucratividade:
 
     def __init__(self):
         from lucratividade import Lucratividade
-        self.__dados = Lucratividade().dados_vendas
+        self.__dados = Lucratividade(comissao=1).dados_vendas
 
     @property
     def dados_bruto(self):
@@ -68,17 +68,26 @@ class LucroVenda:
 
         for n_venda in self.__n_venda:
             vendas[n_venda] = {'Vendedor': '', 'Faturamento': 0.0, 'Custo': 0.0, 'Despesa Fixa': 0.0,
-                               'Despesa Variavel': 0.0, 'Lucro': 0.0}
-
-        for venda in self.__dados:
-            vendas[venda['venda']]['Vendedor'] = venda['vendedor']
-            vendas[venda['venda']]['Faturamento'] += venda['faturamento']
-            vendas[venda['venda']]['Custo'] += venda['custo']
-            vendas[venda['venda']]['Despesa Fixa'] += venda['despesa_fixa']
-            vendas[venda['venda']]['Despesa Variavel'] += venda['despesa_variavel']
-            vendas[venda['venda']]['Lucro'] += venda['lucro']
-            vendas[venda['venda']]['Porcentagem'] = round(vendas[venda['venda']]['Lucro'] / vendas[venda['venda']]['Faturamento'], 2) * 100
-
+                               'Despesa Variavel': 0.0, 'Lucro': 0.0, 'Itens': 0}
+        total = 0.0
+        for numero in vendas:
+            for venda in self.__dados:
+                if venda['venda'] == numero:
+                    vendas[venda['venda']]['Vendedor'] = venda['vendedor']
+                    vendas[venda['venda']]['Faturamento'] += venda['faturamento']
+                    vendas[venda['venda']]['Custo'] += venda['custo']
+                    vendas[venda['venda']]['Despesa Fixa'] += venda['despesa_fixa']
+                    vendas[venda['venda']]['Despesa Variavel'] += venda['despesa_variavel']
+                    vendas[venda['venda']]['Lucro'] += venda['lucro']
+                    vendas[venda['venda']]['Porcentagem'] = round(
+                        vendas[venda['venda']]['Lucro'] / vendas[venda['venda']]['Faturamento'], 2) * 100
+                    vendas[venda['venda']]['Itens'] += 1
+                    total += venda['faturamento']
+                    print(venda['descricao'])
+                    print(vendas[numero])
+            print(f'Total da venda: {numero} foi {total}')
+            print('=' * 200)
+            total = 0.0
         return vendas
 
 

@@ -1,8 +1,10 @@
 # coding: UTF-8
+
 from datetime import date
 from conexao_banco import conecta_banco
 from rateio_despesa import DespesasRateio
 from validador import valida_data
+from valores_padroes import data_inicial_padrao
 
 
 class Lucratividade:
@@ -36,6 +38,18 @@ class Lucratividade:
         else:
             self.__vendedor = vendedor
 
+    @property
+    def lucratividade_por_venda(self):
+        return self.__lucratividade_por_venda()
+
+    @property
+    def lucratividade_por_vendedor(self):
+        return self.__lucratividade_por_vendedor()
+
+    @property
+    def lucratividade_por_vendedor_resumo(self):
+        return self.__lucratividade_por_vendedor_resumo()
+
     def __vendedores(self):
         """
         :return: retorna duas lista uma com o código do vendedor e outra com o nome
@@ -52,30 +66,6 @@ class Lucratividade:
 
         return codigo_vendedor, nome_vendedor
 
-    @property
-    def dados_vendas(self):
-        return self.__dados_vendas()
-
-    @property
-    def dicionario_vendas(self):
-        return self.__dicionario_vendas()
-
-    @property
-    def lucratividade_por_venda(self):
-        return self.__lucratividade_por_venda()
-
-    @property
-    def lucratividade_por_vendedor(self):
-        return self.__lucratividade_por_vendedor()
-
-    @property
-    def lucratividade_por_vendedor_resumo(self):
-        return self.__lucratividade_por_vendedor_resumo()
-
-    @property
-    def vendedores(self):
-        return self.__vendedores()
-
     def __dados_vendas(self):
 
         comando = f'select venda.vendedor, venda_item.venda, venda_item.produto, venda_item.qtd, ' \
@@ -84,8 +74,13 @@ class Lucratividade:
                   f'WHERE venda_item.dtvenda BETWEEN "{self.__data_inicial}" and "{self.__data_final}" ORDER BY venda_item.venda;'
 
         self.__cursor.execute(comando)
-
-        return self.__cursor.fetchall()
+        tabela_vendas_produto = self.__cursor.fetchall()
+        lista_produtos = []
+        for item in tabela_vendas_produto:
+            if len(item) > 4 and (float(item[3]) - item[6]) > 0:
+                lista_produtos.append((item[0], item[1], item[2], float(item[3]) - item[6], float(item[4]),
+                                       float(item[5]), item[6], (float(item[3]) - item[6]) * item[7], item[8]))
+        return lista_produtos
 
     def __numeros_venda(self):
 
@@ -161,36 +156,49 @@ class Lucratividade:
         produto_subgrupo = self.__produto_subgrupo()
         dados_venda_agrupado = self.__dicionario_vendas()
         dados_venda_produto = self.__dados_vendas()
+        vendedores = self.__vendedores()
 
-        for item in self.__numeros_venda():
-            fixa = 0.0
+        for chave in self.__numeros_venda():
+            dados_venda_agrupado[chave] = {'vendedor': '', 'faturamento': 0.0, 'custo': 0.0, 'despesa fixa': 0.0,
+                                           'despesa variavel': 0.0, 'comissao': 0.0, 'custo total': 0.0,
+                                           'lucro': 0.0, 'porcentagem': 0.0}
 
-            for produto in dados_venda_produto:
-                if produto[1] == item:
-                    codigo = produto[2]
-                    quantidade = float(produto[3])
-                    fixa += despesa_fixa[produto_subgrupo[codigo]] * quantidade
-
-            faturamento = dados_venda_agrupado[item]['faturamento']
-
-            variavel = despesa_variavel * faturamento
+        for produto in dados_venda_produto:
+            faturamento = produto[5]
+            custo = produto[7]
+            quantidade = produto[3]
+            subgrupo = produto_subgrupo[produto[2]]
+            valor_fixa = despesa_fixa[subgrupo]
+            fixa = valor_fixa * quantidade
+            variavel = faturamento * despesa_variavel
             comissao = faturamento * self.__comissao
-            custo_total = round(fixa + variavel + comissao + dados_venda_agrupado[item]['custo'], 2)
+
+            custo_total = custo + fixa + variavel + comissao
 
             if custo_total > faturamento:
-                custo_total = round(custo_total - comissao)
+                custo_total -= comissao
                 comissao = 0.0
 
             lucro = faturamento - custo_total
+            vendedor = vendedores[1][vendedores[0].index(produto[0])]
+            dados_venda_agrupado[produto[1]]['vendedor'] = vendedor
+            dados_venda_agrupado[produto[1]]['faturamento'] += faturamento
+            dados_venda_agrupado[produto[1]]['custo'] += custo
+            dados_venda_agrupado[produto[1]]['despesa fixa'] += fixa
+            dados_venda_agrupado[produto[1]]['despesa variavel'] += variavel
+            dados_venda_agrupado[produto[1]]['comissao'] += comissao
+            dados_venda_agrupado[produto[1]]['custo total'] += custo_total
+            dados_venda_agrupado[produto[1]]['lucro'] += lucro
+            dados_venda_agrupado[produto[1]]['porcentagem'] = round(dados_venda_agrupado[produto[1]]['lucro'] /
+                                                                    dados_venda_agrupado[produto[1]][
+                                                                        'faturamento'] * 100, 2)
 
-            dados_venda_agrupado[item]['despesa fixa'] = round(fixa, 2)
-            dados_venda_agrupado[item]['despesa variavel'] = round(variavel, 2)
-            dados_venda_agrupado[item]['comissao'] = round(comissao, 2)
-            dados_venda_agrupado[item]['custo total'] = round(custo_total, 2)
-            dados_venda_agrupado[item]['lucro'] = round(lucro, 2)
-            if lucro != 0 and faturamento != 0:
-                dados_venda_agrupado[item]['porcentagem'] = round((lucro / faturamento) * 100, 2)
-            dados_venda_agrupado[item]['porcentagem'] = 0.0
+        for venda in dados_venda_agrupado:
+            chaves = ['faturamento', 'custo', 'despesa fixa', 'despesa variavel', 'comissao', 'custo total', 'lucro',
+                      'porcentagem']
+
+            for chave in chaves:
+                dados_venda_agrupado[venda][chave] = round(dados_venda_agrupado[venda][chave], 2)
 
         dados_venda = dict()
         for chave in self.__numeros_venda():
@@ -198,7 +206,7 @@ class Lucratividade:
                 if dados_venda_agrupado[chave]['despesa variavel']:
                     dados_venda[chave] = dados_venda_agrupado[chave]
 
-        return dados_venda
+        return dados_venda_agrupado
 
     def __lucratividade_por_vendedor(self):
         vendas = self.__lucratividade_por_venda()
@@ -217,50 +225,65 @@ class Lucratividade:
         vendedores = [vendedor['vendedor'] for vendedor in vendas.values()]
 
         for nome in vendedores:
-            resumo[nome] = {'faturamento': 0.0, 'custo': 0.0, 'despesa fixa': 0.0, 'despesa variavel': 0.0,
-                            'comissao': 0.0,
-                            'custo total': 0.0, 'negativo': 0.0, 'lucro': 0.0, 'porcentagem': 0.0}
+            resumo[nome] = {'quantidade vendas': 0, 'faturamento': 0.0, 'custo': 0.0, 'despesa fixa': 0.0,
+                            'despesa variavel': 0.0, 'comissao': 0.0, 'custo total': 0.0, 'negativo': 0.0, 'lucro': 0.0,
+                            'porcentagem': 0.0}
 
-        for vendedor in vendedores:
-            faturamento = 0.0
-            custo = 0.0
-            despesa_fixa = 0.0
-            despesa_variavel = 0.0
-            comissao = 0.0
-            custo_total = 0.0
-            lucro = 0.0
-            negativo = 0.0
+        for venda in vendas:
+            faturamento = vendas[venda]['faturamento']
+            custo = vendas[venda]['custo']
+            despesa_fixa = vendas[venda]['despesa fixa']
+            despesa_variavel = vendas[venda]['despesa variavel']
+            comissao = vendas[venda]['comissao']
+            custo_total = vendas[venda]['custo total']
+            lucro = vendas[venda]['lucro']
 
-            for venda in vendas:
-                if vendas[venda]['vendedor'] == vendedor:
-                    faturamento += vendas[venda]['faturamento']
-                    custo += vendas[venda]['custo']
-                    despesa_fixa += vendas[venda]['despesa fixa']
-                    despesa_variavel += vendas[venda]['despesa variavel']
-                    comissao += vendas[venda]['comissao']
-                    custo_total += vendas[venda]['custo total']
+            if lucro < 0:
+                negativo = lucro
+            else:
+                negativo = 0.0
 
-                    if vendas[venda]['lucro'] < 0:
-                        negativo += vendas[venda]['lucro']
+            resumo[vendas[venda]['vendedor']]['faturamento'] += round(faturamento, 2)
+            resumo[vendas[venda]['vendedor']]['custo'] += round(custo, 2)
+            resumo[vendas[venda]['vendedor']]['despesa fixa'] += round(despesa_fixa, 2)
+            resumo[vendas[venda]['vendedor']]['despesa variavel'] += round(despesa_variavel, 2)
+            resumo[vendas[venda]['vendedor']]['comissao'] += round(comissao, 2)
+            resumo[vendas[venda]['vendedor']]['custo total'] += round(custo_total)
+            resumo[vendas[venda]['vendedor']]['lucro'] += round(lucro)
+            resumo[vendas[venda]['vendedor']]['negativo'] += round(negativo)
 
-                    lucro += vendas[venda]['lucro']
+        numero_de_vendas = self.__numero_de_vendas_vendedor()
 
-                    resumo[vendedor]['faturamento'] = round(faturamento, 2)
-                    resumo[vendedor]['custo'] = round(custo, 2)
-                    resumo[vendedor]['despesa fixa'] = round(despesa_fixa, 2)
-                    resumo[vendedor]['despesa variavel'] = round(despesa_variavel, 2)
-                    resumo[vendedor]['comissao'] = round(comissao, 2)
-                    resumo[vendedor]['custo total'] = round(custo_total, 2)
-                    resumo[vendedor]['negativo'] = round(negativo, 2)
-                    resumo[vendedor]['lucro'] = round(lucro, 2)
-                    resumo[vendedor]['porcentagem'] = round((lucro / faturamento) * 100, 1)
+        for nome_vendedor in numero_de_vendas:
+
+            if nome_vendedor in resumo:
+                resumo[nome_vendedor]['porcentagem'] = round(resumo[nome_vendedor]['lucro'] / resumo[nome_vendedor]['faturamento'], 2) * 100
+
+            if numero_de_vendas[nome_vendedor]:
+                resumo[nome_vendedor]['quantidade vendas'] = numero_de_vendas[nome_vendedor]
+
+        for venda in resumo:
+            chaves = ['faturamento', 'custo', 'despesa fixa', 'despesa variavel', 'comissao', 'custo total', 'lucro',
+                      'porcentagem']
+
+            for chave in chaves:
+                resumo[venda][chave] = round(resumo[venda][chave], 2)
 
         return resumo
 
+    def __numero_de_vendas_vendedor(self):
+        vendas = self.__lucratividade_por_vendedor()
+        vendedores = self.__vendedores()[1]
+        qtd_venda = {nome: 0 for nome in vendedores}
+
+        for venda in vendas.items():
+            qtd_venda[venda[1]['vendedor']] += 1
+
+        return qtd_venda
+
 
 if __name__ == '__main__':
-    dados = Lucratividade(comissao=1, data_inicial='2022-08-01',
-                          ).lucratividade_por_vendedor_resumo
+    lucro_dados = Lucratividade(comissao=1).lucratividade_por_vendedor_resumo
 
-    for info in dados.items():
+    for info in lucro_dados.items():
         print(info)
