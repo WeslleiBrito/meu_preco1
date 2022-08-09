@@ -50,6 +50,14 @@ class Lucratividade:
     def lucratividade_por_vendedor_resumo(self):
         return self.__lucratividade_por_vendedor_resumo()
 
+    @property
+    def lucratividade_por_item(self):
+        return self.__lucratividade_por_item()
+
+    @property
+    def dados_vendas(self):
+        return self.__dados_vendas()
+
     def __vendedores(self):
         """
         :return: retorna duas lista uma com o código do vendedor e outra com o nome
@@ -257,7 +265,8 @@ class Lucratividade:
         for nome_vendedor in numero_de_vendas:
 
             if nome_vendedor in resumo:
-                resumo[nome_vendedor]['porcentagem'] = round(resumo[nome_vendedor]['lucro'] / resumo[nome_vendedor]['faturamento'], 2) * 100
+                resumo[nome_vendedor]['porcentagem'] = round(
+                    resumo[nome_vendedor]['lucro'] / resumo[nome_vendedor]['faturamento'], 2) * 100
 
             if numero_de_vendas[nome_vendedor]:
                 resumo[nome_vendedor]['quantidade vendas'] = numero_de_vendas[nome_vendedor]
@@ -280,6 +289,55 @@ class Lucratividade:
             qtd_venda[venda[1]['vendedor']] += 1
 
         return qtd_venda
+
+    def __lucratividade_por_item(self):
+        despesas_fixa = DespesasRateio().despesa_fixa
+        despesa_variavel = DespesasRateio().despesa_variavel
+        produto_subgrupo = self.__produto_subgrupo()
+        vendedores = self.__vendedores()
+
+        itens = self.__dados_vendas()
+        produtos = {item[2]: {'vendedor': '', 'venda': 0, 'quantidade': 0.0, 'descricao': item[8],
+                              'faturamento': 0.0, 'desconto': 0.0, 'custo': 0.0, 'comissao': 0.0, 'despesa fixa': 0.0,
+                              'despesa variavel': 0.0, 'negativo': 0.0, 'custo total': 0.0, 'lucro': 0.0,
+                              'porcentagem': 0.0} for item in itens}
+
+        for item in itens:
+            faturamento = item[5]
+            subgrupo = produto_subgrupo[item[2]]
+            quantidade = item[3]
+            custo = item[7]
+            fixa = despesas_fixa[subgrupo] * quantidade
+            variavel = faturamento * despesa_variavel
+            comissao = faturamento * self.__comissao
+            custo_total = custo + fixa + variavel + comissao
+
+            if custo_total > faturamento:
+                custo_total -= comissao
+                comissao = 0.0
+
+            lucro = faturamento - custo_total
+
+            if lucro < 0:
+                negativo = lucro
+            else:
+                negativo = 0.0
+
+            produtos[item[2]]['vendedor'] = vendedores[1][vendedores[0].index(item[0])]
+            produtos[item[2]]['venda'] = item[1]
+            produtos[item[2]]['quantidade'] = item[3]
+            produtos[item[2]]['desconto'] = item[3]
+            produtos[item[2]]['faturamento'] += faturamento
+            produtos[item[2]]['custo'] += custo
+            produtos[item[2]]['despesa fixa'] += fixa
+            produtos[item[2]]['despesa variavel'] += variavel
+            produtos[item[2]]['comissao'] += comissao
+            produtos[item[2]]['custo total'] += custo_total
+            produtos[item[2]]['negativo'] += negativo
+            produtos[item[2]]['lucro'] += lucro
+            produtos[item[2]]['porcentagem'] = produtos[item[2]]['lucro'] / produtos[item[2]]['faturamento'] * 100
+
+        return produtos
 
 
 if __name__ == '__main__':
