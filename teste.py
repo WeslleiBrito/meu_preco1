@@ -65,10 +65,6 @@ class Lucratividade:
     def dados_vendas(self):
         return self.__dados_vendas()
 
-    @property
-    def dicionario_venda(self):
-        return self.__dicionario_vendas()
-
     def __vendedores(self):
         """
         :return: retorna duas lista uma com o código do vendedor e outra com o nome
@@ -109,60 +105,6 @@ class Lucratividade:
 
         return self.__venda
 
-    def __dicionario_vendas(self):
-        dados_gerais = dict()
-        dados_vendas = dict()
-
-        codigo_vendedor = self.__vendedores()[0]
-        nome_vendedores = self.__vendedores()[1]
-
-        for item in self.__dados_vendas():
-            dados_gerais[item[1]] = []
-
-        for item in self.__dados_vendas():
-            dados_gerais[item[1]].append(item)
-
-        for venda in dados_gerais:
-            dados_vendas[venda] = {'venda': 0,
-                                   'vendedor': '',
-                                   'desconto': 0.0,
-                                   'faturamento': 0.0,
-                                   'custo': 0.0,
-                                   'despesa fixa': 0.0,
-                                   'despesa variavel': 0.0,
-                                   'comissao': 0.0,
-                                   'custo total': 0.0,
-                                   'lucro': 0.0,
-                                   'porcentagem': 0.0
-                                   }
-
-        for venda in self.__dados_vendas():
-
-            qtd = float(venda[3]) - float(venda[6])
-            if float(venda[4]) != 0 and qtd != 0:
-                desconto = round((float(venda[4]) / qtd) * qtd, 2)
-                faturamento = round((float(venda[5]) / qtd) * qtd, 2)
-            else:
-                desconto = 0.0
-                faturamento = 0.0
-
-            ponto = str(desconto).index('.')
-            if len(str(desconto)[ponto:]) > 2:
-                desconto = round((float(venda[4]) / qtd) * qtd)
-
-            ponto = str(faturamento).index('.')
-            if len(str(faturamento)[ponto:]) > 2:
-                faturamento = round((float(venda[5]) / qtd) * qtd)
-            custo = round(float(venda[7]) * qtd, 2)
-
-            dados_vendas[venda[1]]['venda'] = venda[1]
-            dados_vendas[venda[1]]['vendedor'] = nome_vendedores[codigo_vendedor.index(venda[0])]
-            dados_vendas[venda[1]]['desconto'] += desconto
-            dados_vendas[venda[1]]['faturamento'] += faturamento
-            dados_vendas[venda[1]]['custo'] += custo
-
-        return dados_vendas
-
     def __produto_subgrupo(self):
         comando = 'SELECT prod_cod, prod_dsubgrupo FROM produto'
         self.__cursor.execute(comando)
@@ -173,7 +115,7 @@ class Lucratividade:
         despesa_variavel = DespesasRateio().despesa_variavel
 
         produto_subgrupo = self.__produto_subgrupo()
-        dados_venda_agrupado = self.__dicionario_vendas()
+        dados_venda_agrupado = {}
         dados_venda_produto = self.__dados_vendas()
         vendedores = self.__vendedores()
 
