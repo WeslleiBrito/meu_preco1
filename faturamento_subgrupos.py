@@ -2,14 +2,30 @@
 from conexao_banco import conecta_banco
 from valores_padroes import data_inicial_padrao
 from datetime import date
+from validador import valida_data
 
 
 class FaturamentoSubgrupo:
-    def __init__(self, data_inicial=data_inicial_padrao(), data_final=date.today()):
+    def __init__(self, data_inicial='', data_final=''):
         self.__banco = conecta_banco()
         self.__cursor = self.__banco.cursor()
-        self.__data_inicial = data_inicial
-        self.__data_final = data_final
+
+        if data_inicial == '':
+            self.__data_inicial = data_inicial_padrao()
+        else:
+            self.__data_inicial = valida_data(data_inicial)
+
+            if self.__data_inicial > date.today():
+                self.__data_inicial = date.today()
+
+        if data_final == '':
+            self.__data_final = date.today()
+        else:
+            self.__data_final = valida_data(data_final)
+
+            if self.__data_inicial > self.__data_final:
+                self.__data_final = self.__data_inicial
+
 
     @property
     def faturamento_por_subgrupo(self):
@@ -74,5 +90,5 @@ class FaturamentoSubgrupo:
 
 
 if __name__ == '__main__':
-    fatura = FaturamentoSubgrupo(data_inicial='2022-07-01', data_final='2022-07-31')
-    print(fatura.custo_total)
+    fatura = FaturamentoSubgrupo()
+    print(fatura.faturamento_total)

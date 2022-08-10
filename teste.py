@@ -4,6 +4,7 @@ from datetime import date
 from conexao_banco import conecta_banco
 from rateio_despesa import DespesasRateio
 from validador import valida_data
+from valores_padroes import arredonda_float
 from valores_padroes import data_inicial_padrao
 
 
@@ -19,10 +20,16 @@ class Lucratividade:
         else:
             self.__data_inicial = valida_data(data_inicial)
 
+            if self.__data_inicial > date.today():
+                self.__data_inicial = date.today()
+
         if not data_final:
             self.__data_final = date.today()
         else:
             self.__data_final = valida_data(data_final)
+
+            if self.__data_final < self.__data_inicial:
+                self.__data_final = self.__data_inicial
 
         self.__banco = conecta_banco()
         self.__cursor = self.__banco.cursor()
@@ -57,6 +64,10 @@ class Lucratividade:
     @property
     def dados_vendas(self):
         return self.__dados_vendas()
+
+    @property
+    def dicionario_venda(self):
+        return self.__dicionario_vendas()
 
     def __vendedores(self):
         """
@@ -197,6 +208,11 @@ class Lucratividade:
             dados_venda_agrupado[produto[1]]['comissao'] += comissao
             dados_venda_agrupado[produto[1]]['custo total'] += custo_total
             dados_venda_agrupado[produto[1]]['lucro'] += lucro
+            if dados_venda_agrupado[produto[1]]['lucro'] < 0:
+                dados_venda_agrupado[produto[1]]['lucro'] += comissao
+                dados_venda_agrupado[produto[1]]['comissao'] -= comissao
+                dados_venda_agrupado[produto[1]]['custo total'] -= comissao
+
             dados_venda_agrupado[produto[1]]['porcentagem'] = round(dados_venda_agrupado[produto[1]]['lucro'] /
                                                                     dados_venda_agrupado[produto[1]][
                                                                         'faturamento'] * 100, 2)
@@ -318,30 +334,32 @@ class Lucratividade:
 
             lucro = faturamento - custo_total
 
+            negativo = 0.0
+
             if lucro < 0:
                 negativo = lucro
-            else:
-                negativo = 0.0
 
             produtos[item[2]]['vendedor'] = vendedores[1][vendedores[0].index(item[0])]
             produtos[item[2]]['venda'] = item[1]
             produtos[item[2]]['quantidade'] = item[3]
             produtos[item[2]]['desconto'] = item[3]
-            produtos[item[2]]['faturamento'] += faturamento
-            produtos[item[2]]['custo'] += custo
-            produtos[item[2]]['despesa fixa'] += fixa
-            produtos[item[2]]['despesa variavel'] += variavel
-            produtos[item[2]]['comissao'] += comissao
-            produtos[item[2]]['custo total'] += custo_total
-            produtos[item[2]]['negativo'] += negativo
-            produtos[item[2]]['lucro'] += lucro
+            produtos[item[2]]['faturamento'] = faturamento
+            produtos[item[2]]['custo'] = custo
+            produtos[item[2]]['despesa fixa'] = fixa
+            produtos[item[2]]['despesa variavel'] = variavel
+            produtos[item[2]]['comissao'] = comissao
+            produtos[item[2]]['custo total'] = custo_total
+            produtos[item[2]]['negativo'] = negativo
+            produtos[item[2]]['lucro'] = lucro
             produtos[item[2]]['porcentagem'] = produtos[item[2]]['lucro'] / produtos[item[2]]['faturamento'] * 100
+
+        produtos = arredonda_float(produtos)
 
         return produtos
 
 
 if __name__ == '__main__':
-    lucro_dados = Lucratividade(comissao=1).lucratividade_por_vendedor_resumo
+    lucro_dados = Lucratividade(comissao=1, data_inicial=data_inicial_padrao()).lucratividade_por_vendedor_resumo
 
     for info in lucro_dados.items():
         print(info)

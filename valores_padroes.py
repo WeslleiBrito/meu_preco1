@@ -7,5 +7,14 @@ def data_inicial_padrao(servidor='ServidorBalcao'):
     return data
 
 
+def arredonda_float(dicionario: dict):
+    for chave in dicionario:
+        for chave_valores in dicionario[chave]:
+            if type(dicionario[chave][chave_valores]) == float:
+                dicionario[chave][chave_valores] = round(dicionario[chave][chave_valores], 2)
+
+    return dicionario
+
+
 if __name__ == '__main__':
     print(data_inicial_padrao())
