@@ -151,9 +151,12 @@ class Lucratividade:
             dados_venda_agrupado[produto[1]]['custo total'] += custo_total
             dados_venda_agrupado[produto[1]]['lucro'] += lucro
             if dados_venda_agrupado[produto[1]]['lucro'] < 0:
-                dados_venda_agrupado[produto[1]]['lucro'] += comissao
-                dados_venda_agrupado[produto[1]]['comissao'] -= comissao
-                dados_venda_agrupado[produto[1]]['custo total'] -= comissao
+                if dados_venda_agrupado[produto[1]]['lucro'] + dados_venda_agrupado[produto[1]]['comissao'] < 0:
+                    dados_venda_agrupado[produto[1]]['lucro'] += dados_venda_agrupado[produto[1]]['comissao']
+                else:
+                    dados_venda_agrupado[produto[1]]['lucro'] += comissao
+                    dados_venda_agrupado[produto[1]]['comissao'] -= comissao
+                    dados_venda_agrupado[produto[1]]['custo total'] -= comissao
 
             dados_venda_agrupado[produto[1]]['porcentagem'] = round(dados_venda_agrupado[produto[1]]['lucro'] /
                                                                     dados_venda_agrupado[produto[1]][
@@ -301,7 +304,7 @@ class Lucratividade:
 
 
 if __name__ == '__main__':
-    lucro_dados = Lucratividade(comissao=1, data_inicial=data_inicial_padrao()).lucratividade_por_vendedor_resumo
+    lucro_dados = Lucratividade(comissao=1).lucratividade_por_vendedor_resumo
 
     for info in lucro_dados.items():
         print(info)

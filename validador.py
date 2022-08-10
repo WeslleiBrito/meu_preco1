@@ -13,7 +13,7 @@ def valida_inteiro(valor):
             return int(valor)
 
 
-def exite_nota(numero=0):
+def existe_nota(numero=0):
     banco = conecta_banco()
     cursor = banco.cursor()
 

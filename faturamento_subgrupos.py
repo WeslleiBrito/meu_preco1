@@ -91,4 +91,4 @@ class FaturamentoSubgrupo:
 
 if __name__ == '__main__':
     fatura = FaturamentoSubgrupo()
-    print(fatura.faturamento_total)
+    print(fatura.faturamento_por_subgrupo)

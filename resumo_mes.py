@@ -71,16 +71,18 @@ class ResumosLucro:
         return self.__resumo()
 
     def __resumo(self):
+        from representa_despesa import DespesaSubgrupo
+        porcentagem_variavel_global = DespesaSubgrupo().despesa_variavel
+
         import pandas as pd
 
         dados = dict()
-
-        dados['Faturamento'] = [self.__faturamento_total]
+        dados['Faturamento Real'] = [self.__faturamento_total]
+        dados['Faturamento'] = [self.__faturamento_total * (1 - porcentagem_variavel_global)]
         dados['Custo'] = [self.__custo_total]
         dados['Despesa Fixa'] = [self.__despesa_fixa]
-        dados['Despesa Variavel'] = [self.__despesa_variavel]
 
-        dados['Saida total'] = [self.__custo_total + dados['Despesa Fixa'][0] + dados['Despesa Variavel'][0]]
+        dados['Saida total'] = [self.__custo_total + dados['Despesa Fixa'][0]]
 
         dados['Lucro R$'] = [round(dados['Faturamento'][0] - (dados['Despesa Fixa'][0] + dados['Custo'][0]), 2)]
         dados['Lucro %'] = [round(dados['Lucro R$'][0] / dados['Faturamento'][0], 3)]
@@ -99,4 +101,4 @@ class ResumosLucro:
 
 
 if __name__ == '__main__':
-    print(ResumosLucro().resumo)
+    print(ResumosLucro(data_inicial='2022-07-01', data_final='2022-07-31').resumo)

@@ -5,8 +5,8 @@ class DadosFornecedor:
 
     def __init__(self, numero_nota=0):
         from conexao_banco import conecta_banco
-        from validador import exite_nota
-        self.__valida_numero_nota = exite_nota(numero=numero_nota)
+        from validador import existe_nota
+        self.__valida_numero_nota = existe_nota(numero=numero_nota)
         self.__banco = conecta_banco()
         self.__cursor = self.__banco.cursor()
         self.__numero_nota = numero_nota

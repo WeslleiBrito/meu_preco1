@@ -5,27 +5,13 @@ from datetime import date
 from valores_padroes import data_inicial_padrao
 from validador import valida_data
 
+
 class Despesas:
     def __init__(self, data_inicial=valida_data(data_inicial_padrao()), data_final=valida_data(str(date.today()))):
         self.__banco = conecta_banco()
         self.__cursor = self.__banco.cursor()
         self.__data_inicial = data_inicial
         self.__data_final = data_final
-
-        # try:
-        #     ano = int(data_inicial[0:4])
-        #     mes = int(data_inicial[5:7])
-        #     dia = int(data_inicial[8:])
-        #     self.__data_inicial = date(ano, mes, dia)
-        #
-        #     ano = int(data_final[0:4])
-        #     mes = int(data_final[5:7])
-        #     dia = int(data_final[8:])
-        #     self.__data_final = date(ano, mes, dia)
-        #
-        # except(ValueError, TypeError, Exception):
-        #     print('Data inválida')
-        #     raise Exception
 
     @property
     def variavel(self):

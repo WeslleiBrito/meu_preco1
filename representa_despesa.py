@@ -23,11 +23,12 @@ class DespesaSubgrupo:
         despesa_subgrupo = dict()
 
         for item in self.__fatura_subgrupo:
-
             faturamento_subgrupo = self.__fatura_subgrupo[item]['faturamento']
             quantidade = self.__fatura_subgrupo[item]['quantidade']
             if faturamento_subgrupo:
                 despesa_subgrupo[item] = round(((faturamento_subgrupo / self.__faturamento_total) * self.__despesa_fixa_total) / quantidade, 2)
+            else:
+                despesa_subgrupo[item] = 0.0
 
         return despesa_subgrupo
 
@@ -36,4 +37,4 @@ class DespesaSubgrupo:
 
 
 if __name__ == '__main__':
-    print(DespesaSubgrupo().despesa_fixa_subgrupo['PREGO C/ CABEÇA'])
+    print(DespesaSubgrupo().despesa_fixa_subgrupo)
