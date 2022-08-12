@@ -25,10 +25,11 @@ class Lucratividade:
         if not data_final:
             self.__data_final = date.today()
         else:
+
             self.__data_final = valida_data(data_final)
 
-            if self.__data_final < self.__data_inicial:
-                self.__data_final = self.__data_inicial
+            if self.__data_final < self.__data_inicial and data_final:
+                self.__data_inicial = self.__data_final
 
         self.__banco = conecta_banco()
         self.__cursor = self.__banco.cursor()
@@ -59,6 +60,10 @@ class Lucratividade:
     @property
     def lucratividade_por_item(self):
         return self.__lucratividade_por_item()
+
+    @property
+    def totais(self):
+        return self.__totais()
 
     def __vendedores(self):
         """
@@ -253,6 +258,9 @@ class Lucratividade:
                               'faturamento': 0.0, 'desconto': 0.0, 'custo': 0.0, 'comissao': 0.0, 'despesa fixa': 0.0,
                               'despesa variavel': 0.0, 'negativo': 0.0, 'custo total': 0.0, 'lucro': 0.0,
                               'porcentagem': 0.0} for item in itens}
+        faturamento_total = 0.0
+        custo_total = 0.0
+        despesas_fixa_totais = 0.0
 
         for item in itens:
             faturamento = item[5]
@@ -278,7 +286,7 @@ class Lucratividade:
             produtos[item[2]]['vendedor'] = vendedores[1][vendedores[0].index(item[0])]
             produtos[item[2]]['venda'] = item[1]
             produtos[item[2]]['quantidade'] = item[3]
-            produtos[item[2]]['desconto'] = item[3]
+            produtos[item[2]]['desconto'] = item[4]
             produtos[item[2]]['faturamento'] = faturamento
             produtos[item[2]]['custo'] = custo
             produtos[item[2]]['despesa fixa'] = fixa
@@ -293,9 +301,16 @@ class Lucratividade:
 
         return produtos
 
+    def __totais(self):
+
+        valores = self.__lucratividade_por_item()
+        faturamento = 0.0
+        for valor in valores.values():
+            faturamento += valor['faturamento']
+        return faturamento
+
 
 if __name__ == '__main__':
-    lucros = Lucratividade(comissao=1).lucratividade_por_vendedor_resumo
+    lucros = Lucratividade(comissao=1, data_final='2022-08-11').totais
 
-    for item in lucros.items():
-        print(item)
+    print(lucros)
