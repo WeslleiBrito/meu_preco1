@@ -4,7 +4,7 @@ from datetime import date
 from conexao_banco import conecta_banco
 from rateio_despesa import DespesasRateio
 from validador import valida_data
-from valores_padroes import arredonda_float
+from valores_padroes import arredonda_float_duas_chaves, arredonda_float_uma_chave
 
 
 class Lucratividade:
@@ -59,11 +59,11 @@ class Lucratividade:
 
     @property
     def lucratividade_por_item(self):
-        return self.__lucratividade_por_item()
+        return self.__lucratividade_por_item()[0]
 
     @property
     def totais(self):
-        return self.__totais()
+        return self.__lucratividade_por_item()[1]
 
     def __vendedores(self):
         """
@@ -153,7 +153,7 @@ class Lucratividade:
             dados_venda_agrupado[produto[1]]['porcentagem'] = round(dados_venda_agrupado[produto[1]]['lucro'] /
                                                                     dados_venda_agrupado[produto[1]][
                                                                         'faturamento'] * 100, 2)
-        dados_venda_agrupado = arredonda_float(dados_venda_agrupado)
+        dados_venda_agrupado = arredonda_float_duas_chaves(dados_venda_agrupado)
 
         dados_venda = dict()
         for chave in self.__numeros_venda():
@@ -203,14 +203,14 @@ class Lucratividade:
                 custo_total -= comissao
                 comissao -= comissao
 
-            resumo[vendas[venda]['vendedor']]['faturamento'] += round(faturamento, 2)
-            resumo[vendas[venda]['vendedor']]['custo'] += round(custo, 2)
-            resumo[vendas[venda]['vendedor']]['despesa fixa'] += round(despesa_fixa, 2)
-            resumo[vendas[venda]['vendedor']]['despesa variavel'] += round(despesa_variavel, 2)
-            resumo[vendas[venda]['vendedor']]['comissao'] += round(comissao, 2)
-            resumo[vendas[venda]['vendedor']]['custo total'] += round(custo_total)
-            resumo[vendas[venda]['vendedor']]['lucro'] += round(lucro)
-            resumo[vendas[venda]['vendedor']]['negativo'] += round(negativo)
+            resumo[vendas[venda]['vendedor']]['faturamento'] += faturamento
+            resumo[vendas[venda]['vendedor']]['custo'] += custo
+            resumo[vendas[venda]['vendedor']]['despesa fixa'] += despesa_fixa
+            resumo[vendas[venda]['vendedor']]['despesa variavel'] += despesa_variavel
+            resumo[vendas[venda]['vendedor']]['comissao'] += comissao
+            resumo[vendas[venda]['vendedor']]['custo total'] += custo_total
+            resumo[vendas[venda]['vendedor']]['lucro'] += lucro
+            resumo[vendas[venda]['vendedor']]['negativo'] += negativo
 
         numero_de_vendas = self.__numero_de_vendas_vendedor()
 
@@ -233,7 +233,7 @@ class Lucratividade:
             if numero_de_vendas[nome_vendedor]:
                 resumo[nome_vendedor]['quantidade vendas'] = numero_de_vendas[nome_vendedor]
 
-        resumo = arredonda_float(resumo)
+        resumo = arredonda_float_duas_chaves(resumo)
 
         return resumo
 
@@ -258,9 +258,9 @@ class Lucratividade:
                               'faturamento': 0.0, 'desconto': 0.0, 'custo': 0.0, 'comissao': 0.0, 'despesa fixa': 0.0,
                               'despesa variavel': 0.0, 'negativo': 0.0, 'custo total': 0.0, 'lucro': 0.0,
                               'porcentagem': 0.0} for item in itens}
-        faturamento_total = 0.0
-        custo_total = 0.0
-        despesas_fixa_totais = 0.0
+
+        totais = {'faturamento': 0.0, 'custo': 0.0, 'despesa fixa': 0.0, 'despesa variavel': 0.0, 'comissao': 0.0,
+                  'negativo': 0.0, 'lucro': 0.0}
 
         for item in itens:
             faturamento = item[5]
@@ -297,20 +297,27 @@ class Lucratividade:
             produtos[item[2]]['lucro'] = lucro
             produtos[item[2]]['porcentagem'] = produtos[item[2]]['lucro'] / produtos[item[2]]['faturamento'] * 100
 
-        produtos = arredonda_float(produtos)
+            totais['faturamento'] += faturamento
+            totais['custo'] += custo
+            totais['despesa fixa'] += fixa
+            totais['despesa variavel'] += variavel
+            totais['comissao'] += comissao
+            totais['negativo'] += negativo
+            totais['lucro'] += lucro
 
-        return produtos
-
-    def __totais(self):
-
-        valores = self.__lucratividade_por_item()
-        faturamento = 0.0
-        for valor in valores.values():
-            faturamento += valor['faturamento']
-        return faturamento
+        produtos = arredonda_float_duas_chaves(produtos)
+        totais = arredonda_float_uma_chave(totais)
+        return produtos, totais
 
 
 if __name__ == '__main__':
-    lucros = Lucratividade(comissao=1, data_final='2022-08-11').totais
+    lucratividade_geral = Lucratividade(comissao=1, data_final='2022-08-12')
 
-    print(lucros)
+    resumo_vendedor = lucratividade_geral.lucratividade_por_vendedor_resumo
+    resumo_venda = lucratividade_geral.lucratividade_por_venda
+
+    for venda in resumo_venda.items():
+        print(venda)
+
+    for vendedor_resumido in resumo_vendedor.items():
+        print(vendedor_resumido)

@@ -1,5 +1,5 @@
-from datetime import date
 # coding: UTF-8
+from datetime import date
 
 class ResumosLucro:
 
