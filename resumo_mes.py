@@ -20,32 +20,7 @@ class ResumosLucro:
         from valores_padroes import data_inicial_padrao
 
         if geral is False:
-            if data_inicial and data_final:
-                self.__data_inicial = valida_data(data_inicial)
-                if valida_data(data_final) >= date.fromisoformat(str(self.__data_inicial)):
-                    self.__data_final = valida_data(data_final)
-                else:
-                    self.__data_final = data_inicial_padrao()
-
-            elif data_inicial:
-                self.__data_inicial = valida_data(data_inicial)
-                self.__data_final = str(date.today())
-
-                self.__despesa_fixa = Despesas(data_inicial=self.__data_inicial, data_final=self.__data_final).fixa
-                self.__despesa_variavel = Despesas(data_inicial=self.__data_inicial,
-                                                   data_final=self.__data_final).variavel
-            elif data_final:
-                self.__data_inicial = data_inicial_padrao()
-
-                if valida_data(data_final) >= date.fromisoformat(str(self.__data_inicial)):
-                    self.__data_final = valida_data(data_final)
-                else:
-                    self.__data_final = data_inicial_padrao()
-
-                self.__despesa_fixa = Despesas(data_inicial=self.__data_inicial, data_final=self.__data_final).fixa
-                self.__despesa_variavel = Despesas(data_inicial=self.__data_inicial,
-                                                   data_final=self.__data_final).variavel
-            else:
+            if not data_inicial and not data_final:
                 mes = date.today().month
                 ano = date.today().year
                 if len(str(mes)) > 1:
@@ -55,13 +30,21 @@ class ResumosLucro:
 
                 self.__data_inicial = data
                 self.__data_final = str(date.today())
+            elif data_inicial and not data_final:
+                self.__data_inicial = valida_data(data_inicial)
+                self.__data_final = str(date.today())
+            elif data_final and not data_inicial:
+                self.__data_inicial = data_inicial_padrao()
+                self.__data_final = valida_data(data_final)
+                if self.__data_inicial < valida_data(data_final):
+                    self.__data_final = valida_data(data_final)
+                    self.__data_inicial = self.__data_final
+            elif data_inicial and data_final:
+                self.__data_inicial = valida_data(data_inicial)
+                self.__data_final = valida_data(data_final)
 
-        else:
-            self.__data_inicial = data_inicial_padrao()
-            self.__data_final = str(date.today())
-
-        self.__despesa_fixa = Despesas(data_inicial=self.__data_inicial, data_final=ultimo_dia_do_mes()).fixa
-        self.__despesa_variavel = Despesas(data_inicial=self.__data_inicial, data_final=ultimo_dia_do_mes()).variavel
+        self.__despesa_fixa = Despesas(data_inicial=self.__data_inicial, data_final=self.__data_final).fixa
+        self.__despesa_variavel = Despesas(data_inicial=self.__data_inicial, data_final=self.__data_final).variavel
 
         self.__faturamento_total = FaturamentoSubgrupo(self.__data_inicial, self.__data_final).faturamento_total
         self.__custo_total = FaturamentoSubgrupo(self.__data_inicial, self.__data_final).custo_total
@@ -69,6 +52,10 @@ class ResumosLucro:
     @property
     def resumo(self):
         return self.__resumo()
+
+    @property
+    def despesa_fixa(self):
+        return self.__despesa_fixa
 
     def __resumo(self):
         from representa_despesa import DespesaSubgrupo
@@ -86,11 +73,12 @@ class ResumosLucro:
 
         dados['Lucro R$'] = [round(dados['Faturamento'][0] - (dados['Despesa Fixa'][0] + dados['Custo'][0]), 2)]
         dados['Lucro %'] = [round(dados['Lucro R$'][0] / dados['Faturamento'][0], 3)]
+        dados['Margem Real'] = [round((dados['Faturamento Real'][0] - dados['Custo'][0]) / dados['Faturamento Real'][0], 2)]
         dados['Margem'] = [round((dados['Faturamento'][0] - dados['Custo'][0]) / dados['Faturamento'][0], 2)]
         dados['Meta Vendas'] = [round(dados['Despesa Fixa'][0] / dados['Margem'][0], 2)]
 
         if dados['Meta Vendas'][0] > dados['Faturamento'][0]:
-            dados['Valor Meta Restante'] = dados['Meta Vendas'][0] - dados['Faturamento'][0]
+            dados['Valor Meta Restante'] = round(dados['Meta Vendas'][0] - dados['Faturamento'][0], 2)
         else:
             dados['Valor Meta Restante'] = 0.0
 
@@ -101,4 +89,4 @@ class ResumosLucro:
 
 
 if __name__ == '__main__':
-    print(ResumosLucro(data_inicial='2022-07-01', data_final='2022-07-31').resumo)
+    print(ResumosLucro().resumo)
