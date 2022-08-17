@@ -311,13 +311,14 @@ class Lucratividade:
 
 
 if __name__ == '__main__':
-    lucratividade_geral = Lucratividade(comissao=1, data_final='2022-08-12')
+    lucratividade_geral = Lucratividade(comissao=1)
 
     resumo_vendedor = lucratividade_geral.lucratividade_por_vendedor_resumo
-    resumo_venda = lucratividade_geral.lucratividade_por_venda
+    resumo_vendas = lucratividade_geral.lucratividade_por_venda
 
-    for venda in resumo_venda.items():
-        print(venda)
+
+    for vendas in resumo_vendas.items():
+        print(vendas)
 
     for vendedor_resumido in resumo_vendedor.items():
         print(vendedor_resumido)

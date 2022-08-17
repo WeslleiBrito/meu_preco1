@@ -1,5 +1,6 @@
 # coding: UTF-8
 from datetime import date
+from validador import ultimo_dia_do_mes
 
 class ResumosLucro:
 
@@ -29,7 +30,7 @@ class ResumosLucro:
                     data = f'{ano}-0{mes}-01'
 
                 self.__data_inicial = data
-                self.__data_final = str(date.today())
+                self.__data_final = str(ultimo_dia_do_mes())
             elif data_inicial and not data_final:
                 self.__data_inicial = valida_data(data_inicial)
                 self.__data_final = str(date.today())
@@ -65,9 +66,9 @@ class ResumosLucro:
 
         dados = dict()
         dados['Faturamento Real'] = [self.__faturamento_total]
-        dados['Faturamento'] = [self.__faturamento_total * (1 - porcentagem_variavel_global)]
-        dados['Custo'] = [self.__custo_total]
-        dados['Despesa Fixa'] = [self.__despesa_fixa]
+        dados['Faturamento'] = [round(self.__faturamento_total * (1 - porcentagem_variavel_global), 2)]
+        dados['Custo'] = [float(self.__custo_total)]
+        dados['Despesa Fixa'] = [float(self.__despesa_fixa)]
 
         dados['Saida total'] = [self.__custo_total + dados['Despesa Fixa'][0]]
 
