@@ -65,28 +65,28 @@ class ResumosLucro:
         import pandas as pd
 
         dados = dict()
-        dados['Faturamento Real'] = [self.__faturamento_total]
-        dados['Faturamento'] = [round(self.__faturamento_total * (1 - porcentagem_variavel_global), 2)]
-        dados['Custo'] = [float(self.__custo_total)]
-        dados['Despesa Fixa'] = [float(self.__despesa_fixa)]
+        dados['Faturamento Real'] = self.__faturamento_total
+        dados['Faturamento'] = round(self.__faturamento_total * (1 - porcentagem_variavel_global), 2)
+        dados['Custo'] = float(self.__custo_total)
+        dados['Despesa Fixa'] = float(self.__despesa_fixa)
 
-        dados['Saida total'] = [self.__custo_total + dados['Despesa Fixa'][0]]
+        dados['Saida total'] = self.__custo_total + dados['Despesa Fixa']
 
-        dados['Lucro R$'] = [round(dados['Faturamento'][0] - (dados['Despesa Fixa'][0] + dados['Custo'][0]), 2)]
-        dados['Lucro %'] = [round(dados['Lucro R$'][0] / dados['Faturamento'][0], 3)]
-        dados['Margem Real'] = [round((dados['Faturamento Real'][0] - dados['Custo'][0]) / dados['Faturamento Real'][0], 2)]
-        dados['Margem'] = [round((dados['Faturamento'][0] - dados['Custo'][0]) / dados['Faturamento'][0], 2)]
-        dados['Meta Vendas'] = [round(dados['Despesa Fixa'][0] / dados['Margem'][0], 2)]
+        dados['Lucro R$'] = round(dados['Faturamento'] - (dados['Despesa Fixa'] + dados['Custo']), 2)
+        dados['Lucro %'] = round((dados['Lucro R$'] / dados['Faturamento']) * 100, 3)
+        dados['Margem Real'] = round(((dados['Faturamento Real'] - dados['Custo']) / dados['Faturamento Real']) * 100, 2)
+        dados['Margem'] = round((dados['Faturamento'] - dados['Custo']) / dados['Faturamento'], 2)
+        dados['Meta Vendas'] = round(dados['Despesa Fixa'] / dados['Margem'], 2)
 
-        if dados['Meta Vendas'][0] > dados['Faturamento'][0]:
-            dados['Valor Meta Restante'] = round(dados['Meta Vendas'][0] - dados['Faturamento'][0], 2)
+        if dados['Meta Vendas'] > dados['Faturamento']:
+            dados['Valor Meta Restante'] = round(dados['Meta Vendas'] - dados['Faturamento'], 2)
         else:
             dados['Valor Meta Restante'] = 0.0
 
-        dados['Data Inicial'] = [date.fromisoformat(str(self.__data_inicial)).strftime('%d/%m/%Y')]
-        dados['Data Final'] = [date.fromisoformat(str(self.__data_final)).strftime('%d/%m/%Y')]
+        dados['Data Inicial'] = date.fromisoformat(str(self.__data_inicial)).strftime('%d/%m/%Y')
+        dados['Data Final'] = date.fromisoformat(str(self.__data_final)).strftime('%d/%m/%Y')
 
-        return pd.DataFrame(dados)
+        return dados
 
 
 if __name__ == '__main__':
