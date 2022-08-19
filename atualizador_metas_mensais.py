@@ -36,9 +36,12 @@ class AtualizaMetasGoogleDrive:
 
 
 if __name__ == '__main__':
+    from atualizador_resumo_diario import AtualizaFaturamentoDiario
     aba = 'Dados'
     arquivo_chave = 'key.json'
     codigo_da_planilha = '1dbh8B_BrHkI_yrBgAEj8JnK0-5q2BQxn-25Ci-sKC4U'
 
     dados_gerais = AtualizaMetasGoogleDrive(aba_tabela=aba, caminho_chave=arquivo_chave,
                                             codigo_planilha=codigo_da_planilha).atualizador_dados_meta
+
+    AtualizaFaturamentoDiario().atualizador_planilha_google

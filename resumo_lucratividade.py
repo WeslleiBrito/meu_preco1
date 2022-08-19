@@ -1,17 +1,20 @@
 # coding: UTF-8
-class CriaPlanilhaLucratividadeItem:
+class ResumoLucratividade:
 
-    def __init__(self, dicionario: dict):
-        self.__dicionario = dicionario
+    def __init__(self, comissao=1):
+        from lucratividade import Lucratividade
+
+        self.__dicionario = Lucratividade(comissao=comissao).lucratividade_por_item
 
     @property
     def dicionario_lista(self):
         return self.__dicionario_lista()
 
-    def __dicionario_lista(self):
-        import pandas as pd
-        from datetime import date
+    @property
+    def resumo(self):
+        return self.__resumo()
 
+    def __dicionario_lista(self):
         venda = []
         vendedor = []
         quantidade = []
@@ -39,19 +42,23 @@ class CriaPlanilhaLucratividadeItem:
             lucro.append(valores['lucro'])
             porcentagem.append(valores['porcentagem'])
 
-        data = str(date.today())
-        data = f'{data[8:]}-{data[5:7]}-{data[0:4]}'
-        return pd.DataFrame(
-            {'Nº': venda, 'Vendedor': vendedor, 'Qtd': quantidade, 'Descrição': descricao, 'Custo': custo,
-             'D. Fixa': despesa_fixa, 'D.Variável': despesa_variavel, 'Comissão': comissao,
-             'Total': custo_total, 'Faturamento': faturamento, 'Lucro R$': lucro,
-             'Lucro %': porcentagem}).to_excel(excel_writer=fr'C:\Relatório de Lucratividade\Lucratividade {data}.xlsx',
-                       sheet_name='Lucratividade', index=False)
+        return {'Nº': venda, 'Vendedor': vendedor, 'Qtd': quantidade, 'Descrição': descricao, 'Custo': custo,
+                'D. Fixa': despesa_fixa, 'D. Variável': despesa_variavel, 'Comissão': comissao, 'Total': custo_total,
+                'Faturamento': faturamento, 'Lucro R$': lucro, 'Lucro %': porcentagem}
+
+    def __resumo(self):
+        valores = {}
+        chaves = ['Faturamento', 'Custo', 'D. Fixa', 'D. Variável', 'Comissão', 'Total', 'Lucro R$', 'Lucro %']
+
+        for chave in chaves:
+            if chave != 'Lucro %':
+                valores[chave] = round(sum(self.__dicionario_lista()[chave]), 2)
+            else:
+                valores[chave] = round(sum(self.__dicionario_lista()[chave]) / 100, 2)
+
+        return valores
 
 
 if __name__ == '__main__':
-    from lucratividade import Lucratividade
-
-    dicionario_lucratividade_item = Lucratividade(comissao=1).lucratividade_por_item
-    dc = CriaPlanilhaLucratividadeItem(dicionario_lucratividade_item).dicionario_lista
-
+    resumo = ResumoLucratividade().resumo
+    print(resumo)
