@@ -26,8 +26,8 @@ class AtualizaMetasGoogleDrive:
     def __atualizador_dados_meta(self):
         planilha = self.__conector_planilha()
 
-        legendas = ['Faturamento Real', 'Faturamento', 'Custo', 'Despesa Fixa', 'Lucro R$', 'Lucro %', 'Margem Real',
-                    'Meta Vendas', 'Valor Meta Restante']
+        legendas = ['Meta Vendas', 'Faturamento', 'Valor Meta Restante', 'Faturamento Real', 'Custo', 'Despesa Fixa',
+                    'Lucro R$', 'Lucro %', 'Margem Real']
 
         for indice, chave in enumerate(legendas):
             if chave in legendas:
