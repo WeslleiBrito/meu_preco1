@@ -41,12 +41,12 @@ class CriaPlanilhaLucratividadeItem:
 
         data = str(date.today())
         data = f'{data[8:]}-{data[5:7]}-{data[0:4]}'
+
         return pd.DataFrame(
             {'Nº': venda, 'Vendedor': vendedor, 'Qtd': quantidade, 'Descrição': descricao, 'Custo': custo,
              'D. Fixa': despesa_fixa, 'D.Variável': despesa_variavel, 'Comissão': comissao,
              'Total': custo_total, 'Faturamento': faturamento, 'Lucro R$': lucro,
-             'Lucro %': porcentagem}).to_excel(excel_writer=fr'C:\Relatório de Lucratividade\Lucratividade {data}.xlsx',
-                       sheet_name='Lucratividade', index=False)
+             'Lucro %': porcentagem})
 
 
 if __name__ == '__main__':

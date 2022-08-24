@@ -316,7 +316,6 @@ if __name__ == '__main__':
     resumo_vendedor = lucratividade_geral.lucratividade_por_vendedor_resumo
     resumo_vendas = lucratividade_geral.lucratividade_por_venda
 
-
     for vendas in resumo_vendas.items():
         print(vendas)
 
