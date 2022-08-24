@@ -26,8 +26,8 @@ class AtualizaMetasGoogleDrive:
     def __atualizador_dados_meta(self):
         planilha = self.__conector_planilha()
 
-        legendas = ['Faturamento Real', 'Faturamento', 'Custo', 'Despesa Fixa', 'Lucro R$', 'Lucro %', 'Margem Real',
-                    'Meta Vendas', 'Valor Meta Restante']
+        legendas = ['Meta Vendas', 'Faturamento', 'Valor Meta Restante', 'Faturamento Real', 'Custo', 'Despesa Fixa',
+                    'Lucro R$', 'Lucro %', 'Margem Real']
 
         for indice, chave in enumerate(legendas):
             if chave in legendas:
@@ -36,9 +36,12 @@ class AtualizaMetasGoogleDrive:
 
 
 if __name__ == '__main__':
+    from atualizador_resumo_diario import AtualizaFaturamentoDiario
     aba = 'Dados'
     arquivo_chave = 'key.json'
     codigo_da_planilha = '1dbh8B_BrHkI_yrBgAEj8JnK0-5q2BQxn-25Ci-sKC4U'
 
     dados_gerais = AtualizaMetasGoogleDrive(aba_tabela=aba, caminho_chave=arquivo_chave,
                                             codigo_planilha=codigo_da_planilha).atualizador_dados_meta
+
+    AtualizaFaturamentoDiario().atualizador_planilha_google
