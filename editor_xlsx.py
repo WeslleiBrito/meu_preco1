@@ -5,8 +5,12 @@ from datetime import date
 from lucratividade import Lucratividade
 from resumo_lucratividade import CriaPlanilhaLucratividadeItem
 
-dicionario_lucratividade_item = Lucratividade(comissao=1).lucratividade_por_item
+lucratividades = Lucratividade(comissao=1, data_final='2022-08-24', data_inicial='2022-08-24')
+dicionario_lucratividade_item = lucratividades.lucratividade_por_item
+totais = lucratividades.totais
+
 planilha_base = CriaPlanilhaLucratividadeItem(dicionario_lucratividade_item).dicionario_lista
+
 
 planilha_modelo = load_workbook('modelo_lucro_item.xlsx')
 data_atual = str(date.today())
@@ -32,11 +36,6 @@ linha_final = 5
 
 for index, dados in enumerate(planilha_base.values):
     linha_final += index
-    custo += dados[4]
-    comissao += dados[7]
-    custo_despesa += dados[8]
-    faturamento += dados[9]
-    lucro += dados[10]
 
     for indice, coluna in zip(indice_valores, colunas):
         planilha_modelo['Relatório'][f'{coluna}{index + 2}'] = dados[indice]
@@ -46,21 +45,20 @@ for index, dados in enumerate(planilha_base.values):
         planilha_modelo['Relatório'][f'{coluna}{index + 2}'].border = Border(top=bordas, left=bordas, right=bordas,
                                                                              bottom=bordas)
 
-print(linha_final)
 index += 5
 planilha_modelo['Relatório'][f'G{index}'] = 'Faturamento'
-planilha_modelo['Relatório'][f'H{index}'] = faturamento
+planilha_modelo['Relatório'][f'H{index}'] = totais['faturamento']
 planilha_modelo['Relatório'][f'G{index + 1}'] = 'Custo'
-planilha_modelo['Relatório'][f'H{index + 1}'] = custo
+planilha_modelo['Relatório'][f'H{index + 1}'] = totais['custo']
 planilha_modelo['Relatório'][f'G{index + 2}'] = 'Comissão'
-planilha_modelo['Relatório'][f'H{index + 2}'] = comissao
+planilha_modelo['Relatório'][f'H{index + 2}'] = totais['comissao']
 planilha_modelo['Relatório'][f'G{index + 3}'] = 'CMV+Despesa'
-planilha_modelo['Relatório'][f'H{index + 3}'] = custo_despesa
+planilha_modelo['Relatório'][f'H{index + 3}'] = totais['custo'] + totais['comissao'] + totais['despesa fixa'] + totais['despesa variavel']
 planilha_modelo['Relatório'][f'G{index + 4}'] = 'Lucro R$'
-planilha_modelo['Relatório'][f'H{index + 4}'] = lucro
+planilha_modelo['Relatório'][f'H{index + 4}'] = totais['lucro']
 
-if lucro and faturamento != 0:
+if totais['lucro'] and totais['faturamento'] != 0:
     planilha_modelo['Relatório'][f'G{index + 5}'] = 'Lucro %'
-    planilha_modelo['Relatório'][f'H{index + 5}'] = round(lucro / faturamento, 2) * 100
+    planilha_modelo['Relatório'][f'H{index + 5}'] = round(totais['lucro'] / totais['faturamento'], 2) * 100
 
 planilha_modelo.save(f'lucratividade_{dia}-{mes}-{ano}.xlsx')
