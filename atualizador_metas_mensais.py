@@ -25,7 +25,7 @@ class AtualizaMetasGoogleDrive:
 
     def __atualizador_dados_meta(self):
         planilha = self.__conector_planilha()
-
+        print(self.__resumo_lucro)
         legendas = ['Meta Vendas', 'Faturamento', 'Valor Meta Restante', 'Faturamento Real', 'Custo', 'Despesa Fixa',
                     'Lucro R$', 'Lucro %', 'Margem Real']
 

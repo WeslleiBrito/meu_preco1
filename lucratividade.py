@@ -269,7 +269,7 @@ class Lucratividade:
                               'porcentagem': 0.0} for item in itens}
 
         totais = {'faturamento': 0.0, 'custo': 0.0, 'despesa fixa': 0.0, 'despesa variavel': 0.0, 'comissao': 0.0,
-                  'totais': 0.0, 'negativo': 0.0, 'lucro': 0.0}
+                  'totais': 0.0, 'negativo': 0.0, 'lucro': 0.0, 'porcentagem': 0.0}
 
         for item in itens:
             faturamento = item[5]
@@ -314,7 +314,7 @@ class Lucratividade:
             totais['totais'] += custo_total
             totais['negativo'] += negativo
             totais['lucro'] += lucro
-
+        totais['porcentagem'] = totais['lucro'] / totais['faturamento'] * 100
         produtos = arredonda_float_duas_chaves(produtos)
         totais = arredonda_float_uma_chave(totais)
         return produtos, totais
@@ -323,7 +323,7 @@ class Lucratividade:
 if __name__ == '__main__':
     lucratividade_geral = Lucratividade(comissao=1)
     cont = 0
-    resumo_vendas = lucratividade_geral.lucratividade_por_venda
+    resumo_vendas = lucratividade_geral.lucratividade_por_vendedor_resumo
 
     for vendas in resumo_vendas.items():
         print(vendas)
