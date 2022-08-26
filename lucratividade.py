@@ -65,10 +65,6 @@ class Lucratividade:
     def totais(self):
         return self.__lucratividade_por_item()[1]
 
-    @property
-    def dados_vendas(self):
-        return self.__dados_vendas()
-
     def __vendedores(self):
         """
         :return: retorna duas lista uma com o código do vendedor e outra com o nome
@@ -154,9 +150,18 @@ class Lucratividade:
             dados_venda_agrupado[produto[1]]['comissao'] += comissao
             dados_venda_agrupado[produto[1]]['custo total'] += custo_total
             dados_venda_agrupado[produto[1]]['lucro'] += lucro
+            if dados_venda_agrupado[produto[1]]['lucro'] < 0:
+                if dados_venda_agrupado[produto[1]]['lucro'] + dados_venda_agrupado[produto[1]]['comissao'] <= 0:
+                    dados_venda_agrupado[produto[1]]['lucro'] += dados_venda_agrupado[produto[1]]['comissao']
+                else:
+                    dados_venda_agrupado[produto[1]]['comissao'] += dados_venda_agrupado[produto[1]]['lucro']
+                    dados_venda_agrupado[produto[1]]['lucro'] = dados_venda_agrupado[produto[1]]['lucro'] \
+                                                                + (dados_venda_agrupado[produto[1]]['lucro']) * -1
+
             dados_venda_agrupado[produto[1]]['porcentagem'] = round(dados_venda_agrupado[produto[1]]['lucro'] /
                                                                     dados_venda_agrupado[produto[1]][
                                                                         'faturamento'] * 100, 2)
+
         dados_venda_agrupado = arredonda_float_duas_chaves(dados_venda_agrupado)
 
         dados_venda = dict()
@@ -264,7 +269,7 @@ class Lucratividade:
                               'porcentagem': 0.0} for item in itens}
 
         totais = {'faturamento': 0.0, 'custo': 0.0, 'despesa fixa': 0.0, 'despesa variavel': 0.0, 'comissao': 0.0,
-                  'negativo': 0.0, 'lucro': 0.0}
+                  'totais': 0.0, 'negativo': 0.0, 'lucro': 0.0}
 
         for item in itens:
             faturamento = item[5]
@@ -289,16 +294,16 @@ class Lucratividade:
 
             produtos[item[2]]['vendedor'] = vendedores[1][vendedores[0].index(item[0])]
             produtos[item[2]]['venda'] = item[1]
-            produtos[item[2]]['quantidade'] += item[3]
+            produtos[item[2]]['quantidade'] = item[3]
             produtos[item[2]]['desconto'] = item[4]
-            produtos[item[2]]['faturamento'] += faturamento
-            produtos[item[2]]['custo'] += custo
-            produtos[item[2]]['despesa fixa'] += fixa
-            produtos[item[2]]['despesa variavel'] += variavel
-            produtos[item[2]]['comissao'] += comissao
-            produtos[item[2]]['custo total'] += custo_total
-            produtos[item[2]]['negativo'] += negativo
-            produtos[item[2]]['lucro'] += lucro
+            produtos[item[2]]['faturamento'] = faturamento
+            produtos[item[2]]['custo'] = custo
+            produtos[item[2]]['despesa fixa'] = fixa
+            produtos[item[2]]['despesa variavel'] = variavel
+            produtos[item[2]]['comissao'] = comissao
+            produtos[item[2]]['custo total'] = custo_total
+            produtos[item[2]]['negativo'] = negativo
+            produtos[item[2]]['lucro'] = lucro
             produtos[item[2]]['porcentagem'] = produtos[item[2]]['lucro'] / produtos[item[2]]['faturamento'] * 100
 
             totais['faturamento'] += faturamento
@@ -306,6 +311,7 @@ class Lucratividade:
             totais['despesa fixa'] += fixa
             totais['despesa variavel'] += variavel
             totais['comissao'] += comissao
+            totais['totais'] += custo_total
             totais['negativo'] += negativo
             totais['lucro'] += lucro
 
@@ -315,12 +321,9 @@ class Lucratividade:
 
 
 if __name__ == '__main__':
-    lucratividade_geral = Lucratividade(comissao=1, data_inicial='2022-08-24', data_final='2022-08-24')
+    lucratividade_geral = Lucratividade(comissao=1)
+    cont = 0
+    resumo_vendas = lucratividade_geral.lucratividade_por_venda
 
-    resumo_vendas = lucratividade_geral.totais
-
-    print(resumo_vendas)
-
-
-
-
+    for vendas in resumo_vendas.items():
+        print(vendas)

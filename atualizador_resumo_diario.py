@@ -2,8 +2,8 @@
 
 class AtualizaFaturamentoDiario:
     def __init__(self):
-        from resumo_lucratividade import ResumoLucratividade
-        self.__faturamento = ResumoLucratividade().resumo
+        from lucratividade import Lucratividade
+        self.__faturamento = Lucratividade(comissao=1).totais
 
     @property
     def conecta(self):
@@ -22,7 +22,7 @@ class AtualizaFaturamentoDiario:
     def __atualizador_planilha_google(self):
         planilha = self.__conector_planilha()
         faturamento = self.__faturamento
-
+        print(faturamento)
         for indice, chave in enumerate(faturamento):
             planilha.update(f'B{indice + 2}', faturamento[chave])
 

@@ -52,6 +52,6 @@ class Despesas:
 
 
 if __name__ == '__main__':
-    tipos = Despesas(data_inicial='2022-08-01', data_final='2022-08-31')
+    tipos = Despesas(data_inicial='2022-07-01', data_final='2022-07-31')
     print('Variavel:', tipos.variavel)
     print('Fixa:', tipos.fixa)
