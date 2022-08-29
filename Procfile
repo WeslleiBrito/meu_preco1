@@ -1,1 +1,1 @@
-worker: python main.py
+worker: python atualizador_metas_mensais.py
