@@ -61,4 +61,4 @@ if totais['lucro'] and totais['faturamento'] != 0:
     planilha_modelo['Relatório'][f'G{index + 5}'] = 'Lucro %'
     planilha_modelo['Relatório'][f'H{index + 5}'] = round(totais['lucro'] / totais['faturamento'], 2) * 100
 
-planilha_modelo.save(f'lucratividade_{dia}-{mes}-{ano}.xlsx')
+planilha_modelo.save(rf'C:\Users\9010\Desktop\Relatório de Lucratividade\lucratividade_{dia}-{mes}-{ano}.xlsx')

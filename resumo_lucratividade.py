@@ -25,19 +25,22 @@ class CriaPlanilhaLucratividadeItem:
         lucro = []
         porcentagem = []
 
-        for valores in self.__dicionario.values():
-            venda.append(valores['venda'])
-            vendedor.append(valores['vendedor'])
-            quantidade.append(valores['quantidade'])
-            descricao.append(valores['descricao'])
-            custo.append(valores['custo'])
-            despesa_fixa.append(valores['despesa fixa'])
-            despesa_variavel.append(valores['despesa variavel'])
-            comissao.append(valores['comissao'])
-            custo_total.append(valores['custo total'])
-            faturamento.append(valores['faturamento'])
-            lucro.append(valores['lucro'])
-            porcentagem.append(valores['porcentagem'])
+        for produtos in self.__dicionario.values():
+            for valores in produtos:
+                venda.append(valores['venda'])
+                vendedor.append(valores['vendedor'])
+                quantidade.append(valores['quantidade'])
+                descricao.append(valores['descricao'])
+                custo.append(valores['custo'])
+                despesa_fixa.append(valores['despesa fixa'])
+                despesa_variavel.append(valores['despesa variavel'])
+                comissao.append(valores['comissao'])
+                custo_total.append(valores['custo total'])
+                faturamento.append(valores['faturamento'])
+                lucro.append(valores['lucro'])
+
+                if valores['lucro'] != 0:
+                    porcentagem.append(valores['porcentagem'])
 
         data = str(date.today())
         data = f'{data[8:]}-{data[5:7]}-{data[0:4]}'
