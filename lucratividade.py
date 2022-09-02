@@ -271,52 +271,53 @@ class Lucratividade:
         totais = {'faturamento': 0.0, 'custo': 0.0, 'despesa fixa': 0.0, 'despesa variavel': 0.0, 'comissao': 0.0,
                   'totais': 0.0, 'negativo': 0.0, 'lucro': 0.0, 'porcentagem': 0.0}
 
-        for item in itens:
-            faturamento = item[5]
-            subgrupo = produto_subgrupo[item[2]]
-            quantidade = item[3]
-            custo = item[7]
-            fixa = despesas_fixa[subgrupo] * quantidade
-            variavel = faturamento * despesa_variavel
-            comissao = faturamento * self.__comissao
-            custo_total = custo + fixa + variavel + comissao
+        if itens:
+            for item in itens:
+                faturamento = item[5]
+                subgrupo = produto_subgrupo[item[2]]
+                quantidade = item[3]
+                custo = item[7]
+                fixa = despesas_fixa[subgrupo] * quantidade
+                variavel = faturamento * despesa_variavel
+                comissao = faturamento * self.__comissao
+                custo_total = custo + fixa + variavel + comissao
 
-            if custo_total > faturamento:
-                custo_total -= comissao
-                comissao = 0.0
+                if custo_total > faturamento:
+                    custo_total -= comissao
+                    comissao = 0.0
 
-            lucro = faturamento - custo_total
+                lucro = faturamento - custo_total
 
-            negativo = 0.0
+                negativo = 0.0
 
-            if lucro < 0:
-                negativo = lucro
+                if lucro < 0:
+                    negativo = lucro
 
-            produtos[item[2]]['vendedor'] = vendedores[1][vendedores[0].index(item[0])]
-            produtos[item[2]]['venda'] = item[1]
-            produtos[item[2]]['quantidade'] = item[3]
-            produtos[item[2]]['desconto'] = item[4]
-            produtos[item[2]]['faturamento'] = faturamento
-            produtos[item[2]]['custo'] = custo
-            produtos[item[2]]['despesa fixa'] = fixa
-            produtos[item[2]]['despesa variavel'] = variavel
-            produtos[item[2]]['comissao'] = comissao
-            produtos[item[2]]['custo total'] = custo_total
-            produtos[item[2]]['negativo'] = negativo
-            produtos[item[2]]['lucro'] = lucro
-            produtos[item[2]]['porcentagem'] = produtos[item[2]]['lucro'] / produtos[item[2]]['faturamento'] * 100
+                produtos[item[2]]['vendedor'] = vendedores[1][vendedores[0].index(item[0])]
+                produtos[item[2]]['venda'] = item[1]
+                produtos[item[2]]['quantidade'] = item[3]
+                produtos[item[2]]['desconto'] = item[4]
+                produtos[item[2]]['faturamento'] = faturamento
+                produtos[item[2]]['custo'] = custo
+                produtos[item[2]]['despesa fixa'] = fixa
+                produtos[item[2]]['despesa variavel'] = variavel
+                produtos[item[2]]['comissao'] = comissao
+                produtos[item[2]]['custo total'] = custo_total
+                produtos[item[2]]['negativo'] = negativo
+                produtos[item[2]]['lucro'] = lucro
+                produtos[item[2]]['porcentagem'] = produtos[item[2]]['lucro'] / produtos[item[2]]['faturamento'] * 100
 
-            totais['faturamento'] += faturamento
-            totais['custo'] += custo
-            totais['despesa fixa'] += fixa
-            totais['despesa variavel'] += variavel
-            totais['comissao'] += comissao
-            totais['totais'] += custo_total
-            totais['negativo'] += negativo
-            totais['lucro'] += lucro
-        totais['porcentagem'] = totais['lucro'] / totais['faturamento'] * 100
-        produtos = arredonda_float_duas_chaves(produtos)
-        totais = arredonda_float_uma_chave(totais)
+                totais['faturamento'] += faturamento
+                totais['custo'] += custo
+                totais['despesa fixa'] += fixa
+                totais['despesa variavel'] += variavel
+                totais['comissao'] += comissao
+                totais['totais'] += custo_total
+                totais['negativo'] += negativo
+                totais['lucro'] += lucro
+            totais['porcentagem'] = totais['lucro'] / totais['faturamento'] * 100
+            produtos = arredonda_float_duas_chaves(produtos)
+            totais = arredonda_float_uma_chave(totais)
         return produtos, totais
 
 

@@ -1,31 +1,15 @@
-# coding: UTF-8
+from lucratividade import Lucratividade
 
-class AtualizaFaturamentoDiario:
-    def __init__(self):
-        from resumo_lucratividade import ResumoLucratividade
-        self.__faturamento = ResumoLucratividade().resumo
+lc_geral = Lucratividade(comissao=1, data_inicial='2022-09-01', data_final='2022-09-01')
 
-    @property
-    def conecta(self):
-        return self.__conector_planilha()
+lucro_item = lc_geral.lucratividade_por_item
 
-    @property
-    def atualizador_planilha_google(self):
-        return self.__atualizador_planilha_google()
+total_lucro = 0.0
 
-    def __conector_planilha(self):
-        import gspread
-        conecta_servico = gspread.service_account('key.json')
-        return conecta_servico.open_by_key('1dbh8B_BrHkI_yrBgAEj8JnK0-5q2BQxn-25Ci-sKC4U'). \
-            worksheet('Faturamento Diário')
+for lucro in lucro_item:
+    if lucro_item[lucro]['negativo'] < 0:
+        total_lucro += lucro_item[lucro]['negativo']
+        print(lucro_item[lucro])
 
-    def __atualizador_planilha_google(self):
-        planilha = self.__conector_planilha()
-        faturamento = self.__faturamento
+print(total_lucro)
 
-        for indice, chave in enumerate(faturamento):
-            planilha.update(f'B{indice + 2}', faturamento[chave])
-
-
-if __name__ == '__main__':
-    AtualizaFaturamentoDiario().atualizador_planilha_google
