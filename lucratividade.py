@@ -313,7 +313,8 @@ class Lucratividade:
                     item['lucro'] = round(item['faturamento'] - custo_total, 2)
 
                     if (item['lucro'] and item['faturamento']) != 0:
-                        item['porcentagem'] = round(((item['faturamento'] - custo_total) / item['faturamento']) * 100, 2)
+                        item['porcentagem'] = round(((item['faturamento'] - custo_total) / item['faturamento']) * 100,
+                                                    2)
 
                     item['custo total'] = round(custo_total, 2)
 
@@ -340,10 +341,11 @@ class Lucratividade:
         for chave in geral:
             dicionario_vendas[chave]
 
-if __name__ == '__main__':
-    lucratividade_geral = Lucratividade(comissao=1, data_inicial='2022-09-01', data_final='2022-09-01')
 
-    resumo_vendas = lucratividade_geral.lucratividade_por_item
+if __name__ == '__main__':
+    lucratividade_geral = Lucratividade(comissao=1)
+
+    resumo_vendas = lucratividade_geral.lucratividade_por_vendedor_resumo
 
     for vendas in resumo_vendas.items():
         print(vendas)

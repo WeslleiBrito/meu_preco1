@@ -2,6 +2,7 @@
 import pandas as pd
 import os
 from colorama import Fore
+from utilidades import arredonda_para_cima
 
 
 class CriaNotaEntrada:
@@ -49,7 +50,7 @@ class CriaNotaEntrada:
         return dict(self.__dados_fornecedor[0], **self.__dados_sistema)
 
     def __calcula_preco_venda(self):
-
+        print(self.__dados_sistema)
         if type(self.__dados_fornecedor[0]) is dict and type(self.__dados_sistema) is dict:
             calulos_venda = {'despesa_variavel': [], 'valor_desconto': [], 'comissao': [], 'valor_lucro': [],
                              'venda': []}
@@ -63,13 +64,13 @@ class CriaNotaEntrada:
 
                 valor_monetario = custo + despesa_fixa
                 valor_percentual = 1 - (self.__comissao + self.__despesa_variavel + desconto + lucro)
-                preco_venda = round(valor_monetario / valor_percentual, 1)
+                preco_venda = arredonda_para_cima(valor_monetario / valor_percentual)
 
                 calulos_venda['despesa_variavel'].append(round(preco_venda * self.__despesa_variavel, 2))
                 calulos_venda['valor_desconto'].append(round(preco_venda * desconto, 2))
                 calulos_venda['comissao'].append(round(preco_venda * self.__comissao, 2))
                 calulos_venda['valor_lucro'].append(round(preco_venda * lucro, 2))
-                calulos_venda['venda'].append(preco_venda)
+                calulos_venda['venda'].append(f'{preco_venda}0'.replace('.', ','))
 
             return pd.DataFrame(dict(dados_unificados, **calulos_venda)).to_excel(
                 f"{self.__caminho}{self.__dados_fornecedor[1]} {self.__dados_fornecedor[2]}.xlsx", sheet_name='Compra')

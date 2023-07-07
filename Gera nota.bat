@@ -1,0 +1,1 @@
+py C:\Users\9010\PycharmProjects\meu_preco1\cria_nota_entrada.py

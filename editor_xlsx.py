@@ -5,7 +5,7 @@ from datetime import date
 from lucratividade import Lucratividade
 from resumo_lucratividade import CriaPlanilhaLucratividadeItem
 
-lucratividades = Lucratividade(comissao=1)
+lucratividades = Lucratividade(comissao=1, data_inicial="2022-10-31", data_final="2022-10-31")
 dicionario_lucratividade_item = lucratividades.lucratividade_por_item
 totais = lucratividades.totais
 

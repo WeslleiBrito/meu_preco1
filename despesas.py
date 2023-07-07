@@ -21,6 +21,10 @@ class Despesas:
     def fixa(self):
         return self.__calcula_despesas()[0]
 
+    @property
+    def lista(self):
+        return self.__lista
+
     def __tipo_despesas(self):
         self.__cursor.execute('SELECT tipocont_cod, tipocont_despesa, conta_fixa FROM tipoconta')
 
@@ -31,27 +35,39 @@ class Despesas:
 
         return tipo_fixa, tipo_variavel
 
+    def __soma(self, valor):
+
+        return sum([item[0] for item in valor])
+    
     def __calcula_despesas(self):
-        self.__cursor.execute(
-            f'SELECT rateio_tipoconta, DATE_FORMAT(rateio_dtvencimento,"%d%/%m%/%Y") as Vencimento, rateio_vlrparcela FROM pagar_rateio WHERE rateio_dtvencimento BETWEEN "{self.__data_inicial}" AND "{self.__data_final}";')
+        query_variavel = f"""
+            SELECT
+            pagar_rateio.rateio_vlrparcela AS "Valor da Parcela"
+            FROM
+            tipoconta
+            INNER JOIN pagar_rateio ON pagar_rateio.rateio_tipoconta = tipoconta.tipocont_cod WHERE pagar_rateio.rateio_dtvencimento BETWEEN "{self.__data_inicial}" AND "{self.__data_final}"  AND tipoconta.conta_fixa = 0 AND tipoconta.tipocont_cod <> 79 AND tipoconta.tipocont_cod <> 75; 
 
-        geral = [item for item in self.__cursor.fetchall()]
+        """
 
-        tipo_fixa = self.__tipo_despesas()[0]
-        tipo_variavel = self.__tipo_despesas()[1]
-        valor_despesa_fixa = 0
-        valor_despesa_variavel = 0
+        query_fixa = f"""
+            SELECT
+            pagar_rateio.rateio_vlrparcela AS "Valor da Parcela"
+            FROM
+            tipoconta
+            INNER JOIN pagar_rateio ON pagar_rateio.rateio_tipoconta = tipoconta.tipocont_cod WHERE pagar_rateio.rateio_dtvencimento BETWEEN "{self.__data_inicial}" AND "{self.__data_final}"  AND tipoconta.conta_fixa = 1; 
 
-        for item in geral:
-            if item[0] in tipo_fixa:
-                valor_despesa_fixa += item[2]
-            elif item[0] in tipo_variavel:
-                valor_despesa_variavel += item[2]
+        """
 
-        return round(valor_despesa_fixa, 2), round(valor_despesa_variavel, 2)
+        self.__cursor.execute(query_variavel) 
+        variavel = self.__soma(self.__cursor.fetchall())
+        self.__cursor.execute(query_fixa)
+        fixa = self.__soma(self.__cursor.fetchall())
+
+        return round(fixa, 2), round(variavel, 2)
+
+    
 
 
 if __name__ == '__main__':
-    tipos = Despesas(data_inicial='2022-07-01', data_final='2022-07-31')
-    print('Variavel:', tipos.variavel)
-    print('Fixa:', tipos.fixa)
+    tipos = Despesas(data_inicial='2023-06-01', data_final='2023-06-30')
+    print('Variavel:', tipos.variavel, "\n" + 'Fixa:', tipos.fixa)

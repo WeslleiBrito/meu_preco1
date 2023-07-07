@@ -3,6 +3,7 @@ from rateio_despesa import DespesasRateio
 from datetime import date
 
 
+
 class FaturamentoDiario:
 
     def __init__(self):
@@ -33,3 +34,7 @@ class FaturamentoDiario:
                                                             2)
 
         return dados_faturamento
+
+
+if __name__ == '__main__':
+    print(FaturamentoDiario().faturamentoDiario)

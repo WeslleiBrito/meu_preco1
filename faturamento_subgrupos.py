@@ -77,6 +77,7 @@ class FaturamentoSubgrupo:
             subgrupo[chave]['desconto'] += item[3]
             subgrupo[chave]['faturamento'] += item[4]
             subgrupo[chave]['qtd_devolvida'] += item[5]
+	    
 
         return subgrupo
 
